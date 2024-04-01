@@ -1,10 +1,15 @@
 ![Github Actions](../../actions/workflows/terraform.yml/badge.svg)
 
-# Terraform <NAME>
+# Terraform AWS Connectivity Module
 
 ## Description
 
-Add a description of the module here
+The purpose of this module is to provision the necessary resources to establish connectivity between a transit gateway and other VPCs, accounts, and on-premises networks, as well as provision a baseline for network topology and security. Currently this module can setup the requirement for
+
+- Inspection VPC: provision the necessary resources and routing to inspect traffic between the transit gateway and spoke VPCs.
+- Trusted Layout: here the routing is broken into two routing domains, trusted and untrusted. All traffic within the environment have the ability to route to the trusted domain attachments and back, but traffic between those networks located in the untrusted domain is forbidden.
+- Egress VPC: using either one of the above, this module can setup the requirements for an egress VPC to route traffic to the internet.
+- Ingress VPC: using either one of the above, this module can setup the requirements for an ingress VPC to route traffic from the internet, to the tenant VPCs.
 
 ## Usage
 
