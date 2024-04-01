@@ -2,7 +2,7 @@
 ## Provision the inspection layout when required 
 module "inspection" {
   count  = local.enable_inspection ? 1 : 0
-  source = "./modules/tgw-inspection"
+  source = "./modules/tgw_inspection"
 
   attachment_id                      = var.connectivity_config.inspection.attachment_id
   tags                               = var.tags

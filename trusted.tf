@@ -1,7 +1,7 @@
 
 module "trusted" {
   count  = local.enable_trusted ? 1 : 0
-  source = "./modules/tgw-trusted"
+  source = "./modules/tgw_trusted"
 
   tags                               = var.tags
   transit_gateway_id                 = module.tgw.ec2_transit_gateway_id

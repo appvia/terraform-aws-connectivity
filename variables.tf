@@ -9,6 +9,26 @@ variable "amazon_side_asn" {
   }
 }
 
+variable "prefix_lists" {
+  description = "Provides the ability to provision prefix lists, and share them with other accounts."
+  type = list(object({
+    name = string
+    entry = list(object({
+      address_family = optional(string, "IPv4")
+      cidr           = string
+      description    = string
+      max_entries    = number
+    }))
+  }))
+  default = []
+}
+
+variable "prefix_ram_principals" {
+  description = "The list of organizational units or accounts to share the prefix lists with."
+  type        = list(string)
+  default     = []
+}
+
 variable "connectivity_config" {
   description = "The type of connectivity options for the transit gateway."
   type = object({
