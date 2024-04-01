@@ -21,6 +21,8 @@ AUTHOR_EMAIL=info@appvia.io
 default: all
 
 all: 
+	$(MAKE) init
+	$(MAKE) validate
 	$(MAKE) security
 	$(MAKE) lint
 	$(MAKE) format
@@ -38,6 +40,14 @@ documentation:
 documentation-examples:
 	@echo "--> Generating documentation examples"
 	@find examples -type d -mindepth 1 -maxdepth 1 -exec terraform-docs markdown table --output-file README.md --output-mode inject {} \;
+
+init: 
+	@echo "--> Running terraform init"
+	@terraform init -backend=false
+
+validate:
+	@echo "--> Running terraform validate"
+	@terraform validate
 
 lint:
 	@echo "--> Running tflint"
