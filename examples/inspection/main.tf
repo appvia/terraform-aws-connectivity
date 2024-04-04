@@ -18,7 +18,19 @@ module "hub" {
 
   connectivity_config = {
     inspection = {
-      inspection_tgw_attachment_id = "tgw-attach-111111"
+      ## Will be created in the hub account i.e. provider aws 
+      network = {
+        availability_zones = 3
+        name               = "inspection"
+        private_netmask    = "24"
+        public_netmask     = "24"
+        vpc_cidr           = "100.64.0.0/21"
+      }
+      #
+      ## If you want to create the inspection vpc independently, create post the transit gateway creation
+      ## and provide the attachment id afterwards
+      # 
+      # attachment_id = "tgw-attach-1234567890"
     }
   }
 

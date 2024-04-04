@@ -55,9 +55,16 @@ variable "connectivity_config" {
       }), null)
     }), null)
     inspection = optional(object({
-      attachment_id            = optional(string, "")
+      attachment_id            = optional(string, null)
       inbound_route_table_name = optional(string, "inbound")
-      spokes_route_table_name  = optional(string, "spokes")
+      network = optional(object({
+        availability_zones = number
+        name               = optional(string, "inspection")
+        private_netmask    = optional(number, 24)
+        public_netmask     = optional(number, 24)
+        vpc_cidr           = optional(string, "100.64.0.0/21")
+      }), null)
+      spokes_route_table_name = optional(string, "spokes")
     }), null)
     trusted = optional(object({
       trusted_attachments      = optional(list(string), [])

@@ -16,9 +16,11 @@ locals {
 
 locals {
   ## Indicates if we should provision a vpc for egress 
-  enable_egress_creation = local.enable_egress && var.connectivity_config.egress.network != null
+  enable_egress_creation = local.enable_egress && try(var.connectivity_config.egress.network, null) != null
   ## Indicates if we should provision a vpc for ingress 
-  enable_ingress_creation = local.enable_ingress && var.connectivity_config.ingress.network != null
+  enable_ingress_creation = local.enable_ingress && try(var.connectivity_config.ingress.network, null) != null
+  ## Indicates if we should create the inspection vpc 
+  enable_inspection_vpc_creation = local.enable_inspection && try(var.connectivity_config.inspection.network, null) != null
 }
 
 ## Provision an egress vpc if required 
@@ -47,10 +49,6 @@ module "egress_vpc" {
     private = "10.0.0.0/8"
     public  = "10.0.0.0/8"
   }
-
-  providers = {
-    aws = aws.egress
-  }
 }
 
 ## Provision an ingress vpc if required
@@ -75,10 +73,6 @@ module "ingress_vpc" {
   transit_gateway_routes = {
     private = "0.0.0.0/0"
     public  = "0.0.0.0/0"
-  }
-
-  providers = {
-    aws = aws.ingress
   }
 }
 
