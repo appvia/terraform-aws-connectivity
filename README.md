@@ -32,12 +32,6 @@ module "example" {
       inspection_tgw_attachment_id = "tgw-attach-111111"
     }
   }
-
-  providers = {
-    aws         = aws
-    aws.egress  = aws.egress
-    aws.ingress = aws.ingress
-  }
 }
 ```
 
@@ -49,7 +43,7 @@ Currently the module supports the following layouts:
 
 <p align="center">
   </br>
-  <img src="docs/inspection.drawio.svg" alt="Inspection Layout" width="600"/>
+  <img src="https://github.com/appvia/terraform-aws-connectivity/blob/main/docs/inspection.drawio.svg" alt="Inspection Layout" width="600"/>
 </p>
 
 The inspection layout is intended to be used in collaboration with an [Inspection VPC](https://d1.awsstatic.com/architecture-diagrams/ArchitectureDiagrams/inspection-deployment-models-with-AWS-network-firewall-ra.pdf), filtering all traffic between the spokes, and depending if enabled, all traffic outbound to the internet or inbound via an ingress VPC.
@@ -116,7 +110,7 @@ Notes:
 
 <p align="center">
   </br>
-  <img src="docs/trusted.drawio.svg" alt="Trusted Layout" width="600"/>
+  <img src="https://github.com/appvia/terraform-aws-connectivity/blob/main/docs/trusted.drawio.svg" alt="Trusted Layout" width="600"/>
 </p>
 
 The trusted layout uses transit gateway routing tables to create two distinct routing domains:
