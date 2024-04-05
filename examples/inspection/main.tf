@@ -33,10 +33,4 @@ module "hub" {
       # attachment_id = "tgw-attach-1234567890"
     }
   }
-
-  providers = {
-    aws         = aws
-    aws.egress  = aws.egress
-    aws.ingress = aws.ingress
-  }
 }
