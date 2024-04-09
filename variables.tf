@@ -33,26 +33,70 @@ variable "connectivity_config" {
   description = "The type of connectivity options for the transit gateway."
   type = object({
     egress = optional(object({
-      attachment_id = optional(string, "")
-      network = optional(object({
-        availability_zones = number
+      network = object({
+        availability_zones = optional(number, 2)
         ipam_pool_id       = optional(string, null)
         name               = optional(string, "egress")
+        private_netmask    = optional(number, 28)
+        public_netmask     = optional(number, 28)
         vpc_cidr           = optional(string, null)
         vpc_netmask        = optional(string, null)
+      })
+    }), null)
+    endpoints = optional(object({
+      network = object({
+        availability_zones = optional(number, 2)
+        ipam_pool_id       = optional(string, null)
+        name               = optional(string, "endpoints")
+        private_netmask    = optional(number, 24)
+        vpc_cidr           = optional(string, null)
+        vpc_netmask        = optional(string, null)
+      })
+      sharing = optional(object({
+        principals = optional(list(string), [])
       }), null)
+      services = optional(map(object({
+        private_dns_enabled = optional(bool, true)
+        service_type        = optional(string, "Interface")
+        service             = string
+        policy              = optional(string, null)
+        })), {
+        ec2 = {
+          service = "ec2"
+        },
+        ec2messages = {
+          service = "ec2messages"
+        },
+        ssm = {
+          service = "ssm"
+        },
+        ssmmessages = {
+          service = "ssmmessages"
+        },
+        logs = {
+          service = "logs"
+        },
+        kms = {
+          service = "kms"
+        },
+        secretsmanager = {
+          service = "secretsmanager"
+        },
+        s3 = {
+          service = "s3"
+        },
+      })
     }), null)
     ingress = optional(object({
-      attachment_id = optional(string, "")
-      network = optional(object({
-        availability_zones = number
+      network = object({
+        availability_zones = optional(number, 2)
         ipam_pool_id       = optional(string, null)
         name               = optional(string, "ingress")
-        private_netmask    = optional(number, null)
-        public_netmask     = optional(number, null)
+        private_netmask    = number
+        public_netmask     = number
         vpc_cidr           = optional(string, null)
         vpc_netmask        = optional(string, null)
-      }), null)
+      })
     }), null)
     inspection = optional(object({
       attachment_id            = optional(string, null)
@@ -124,4 +168,3 @@ variable "tags" {
   description = "A map of tags to add to all resources."
   type        = map(string)
 }
-

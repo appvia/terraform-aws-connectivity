@@ -49,8 +49,9 @@ Currently the module supports the following layouts:
 The inspection layout is intended to be used in collaboration with an [Inspection VPC](https://d1.awsstatic.com/architecture-diagrams/ArchitectureDiagrams/inspection-deployment-models-with-AWS-network-firewall-ra.pdf), filtering all traffic between the spokes, and depending if enabled, all traffic outbound to the internet or inbound via an ingress VPC.
 
 ```hcl
-module "inspection" {
-  source = "appvia/network/aws//modules/tgw_inspection"
+module "connectivity" {
+  source  = "appvia/connectivity/aws"
+  version = "0.0.2""
 
   # insert variables here
   connectivity_config = {
@@ -73,8 +74,9 @@ module "inspection" {
 By adding the optional of egress, another VPC can be provisioned containing outbound nat gateways to route traffic to the internet.
 
 ```hcl
-module "inspection" {
-  source = "appvia/network/aws//modules/tgw_inspection"
+module "connectivity" {
+  source  = "appvia/connectivity/aws"
+  version = "0.0.2"
 
   # insert variables here
   connectivity_config = {
@@ -127,6 +129,122 @@ Notes:
 - Adding a new trusted requires manual intervention, i.e the network is automatically added to the untrusted routing table, manually deleted, and then the attachment id added to the trusted attachments variable.
 - Any trusted attachments are automatically added to the untrusted routing table, to ensure bi-directional routing.
 
+### Egress VPC
+
+<p align="center">
+  </br>
+  <img src="https://github.com/appvia/terraform-aws-connectivity/blob/feat_endppoints/docs/egress-vpc.png" alt="Egress VPC">
+</p>
+
+By adding a `var.connectivity_config.egress` object, the module will provision the necessary resources to route traffic to the internet via a shared egress VPC. Routing within the choose network layout (inspection, or trusted) is automatically provisioned accordingly.
+
+```hcl
+module "connectivity" {
+  source  = "appvia/connectivity/aws"
+  version = "0.0.2"
+
+  connectivity_config = {
+    egress = {
+      network = {
+        availability_zones = 2
+        ipam_pool_id       = var.ipam_pool_id
+        name               = "egress"
+        private_netmask    = 28
+        vpc_netmask        = 24
+      }
+    }
+  }
+}
+```
+
+### Ingress VPC
+
+<p align="center">
+  </br>
+  <img src="https://github.com/appvia/terraform-aws-connectivity/blob/feat_endppoints/docs/ingress-vpc.png" alt="Ingress VPC">
+</p>
+
+By adding a `var.connectivity_config.ingress` object, the module will provision the necessary resources to route traffic from the internet to the tenant VPCs. Routing within the choose network layout (inspection, or trusted) is automatically provisioned accordingly. Note, this module does not provisioned the load balancers and or WAF devices depicted in the diagram; purely the VPC and connectivity.
+
+```hcl
+module "connectivity" {
+  source  = "appvia/connectivity/aws"
+  version = "0.0.2"
+
+  connectivity_config = {
+    ingress = {
+      network = {
+        availability_zones = 2
+        ipam_pool_id       = var.ipam_pool_id
+        name               = "ingress"
+        private_netmask    = 24
+        public_netmask     = 22
+        vpc_netmask        = 21
+      }
+    }
+  }
+}
+```
+
+### Private Endpoints
+
+Ensuring all traffic is private and does not traverse the internet is a common requirement. By adding the `var.connectivity_config.endpoints` object, the module will provision the necessary resources to route traffic to the internet via a shared endpoints VPC. Routing within the choose network layout (inspection, or trusted) is automatically provisioned accordingly.
+
+Take a look at the [endpoints module](https://github.com/appvia/terraform-aws-private-endpoints) to see how it works, and the prerequisites required on the consumer side i.e associating the resolvers rule sets with the spoke vpc.
+
+```hcl
+module "connectivity" {
+  source  = "appvia/connectivity/aws"
+  version = "0.0.2"
+
+  connectivity_config = {
+    endpoints = {
+      # A collection of private endpoints to provision
+      services = {
+        ec2 = {
+          service = "ec2"
+        },
+        ec2messages = {
+          service = "ec2messages"
+        },
+        ssm = {
+          service = "ssm"
+        },
+        ssmmessages = {
+          service = "ssmmessages"
+        },
+        logs = {
+          service = "logs"
+        },
+        kms = {
+          service = "kms"
+        },
+        secretsmanager = {
+          service = "secretsmanager"
+        },
+        s3 = {
+          service = "s3"
+        },
+      }
+      # Configuration for sharing the resolver rule sets with the spoke vpcs
+      sharing = {
+        ram_principals = var.ram_principals
+      }
+      # Configuration for the endpoints vpc
+      network = {
+        availability_zones = 2
+        ipam_pool_id       = var.ipam_pool_id
+        name               = "endpoints"
+        private_netmask    = 24
+        public_netmask     = 22
+        vpc_netmask        = 21
+      }
+    }
+
+  }
+}
+```
+
 ## Update Documentation
 
 The `terraform-docs` utility is used to generate this README. Follow the below steps to update:
@@ -153,8 +271,9 @@ The `terraform-docs` utility is used to generate this README. Follow the below s
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_egress_vpc"></a> [egress\_vpc](#module\_egress\_vpc) | appvia/network/aws | 0.1.3 |
-| <a name="module_ingress_vpc"></a> [ingress\_vpc](#module\_ingress\_vpc) | appvia/network/aws | 0.1.3 |
+| <a name="module_egress_vpc"></a> [egress\_vpc](#module\_egress\_vpc) | appvia/network/aws | 0.1.4 |
+| <a name="module_endpoints"></a> [endpoints](#module\_endpoints) | appvia/private-endpoints/aws | 0.1.0 |
+| <a name="module_ingress_vpc"></a> [ingress\_vpc](#module\_ingress\_vpc) | appvia/network/aws | 0.1.4 |
 | <a name="module_inspection"></a> [inspection](#module\_inspection) | ./modules/tgw_inspection | n/a |
 | <a name="module_inspection_vpc"></a> [inspection\_vpc](#module\_inspection\_vpc) | appvia/network/aws | 0.1.3 |
 | <a name="module_share_prefixes"></a> [share\_prefixes](#module\_share\_prefixes) | ./modules/prefix_share | n/a |
@@ -178,7 +297,7 @@ The `terraform-docs` utility is used to generate this README. Follow the below s
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_amazon_side_asn"></a> [amazon\_side\_asn](#input\_amazon\_side\_asn) | The ASN for the transit gateway. | `number` | n/a | yes |
-| <a name="input_connectivity_config"></a> [connectivity\_config](#input\_connectivity\_config) | The type of connectivity options for the transit gateway. | <pre>object({<br>    egress = optional(object({<br>      attachment_id = optional(string, "")<br>      network = optional(object({<br>        availability_zones = number<br>        ipam_pool_id       = optional(string, null)<br>        name               = optional(string, "egress")<br>        vpc_cidr           = optional(string, null)<br>        vpc_netmask        = optional(string, null)<br>      }), null)<br>    }), null)<br>    ingress = optional(object({<br>      attachment_id = optional(string, "")<br>      network = optional(object({<br>        availability_zones = number<br>        ipam_pool_id       = optional(string, null)<br>        name               = optional(string, "ingress")<br>        private_netmask    = optional(number, null)<br>        public_netmask     = optional(number, null)<br>        vpc_cidr           = optional(string, null)<br>        vpc_netmask        = optional(string, null)<br>      }), null)<br>    }), null)<br>    inspection = optional(object({<br>      attachment_id            = optional(string, null)<br>      inbound_route_table_name = optional(string, "inbound")<br>      network = optional(object({<br>        availability_zones = number<br>        name               = optional(string, "inspection")<br>        private_netmask    = optional(number, 24)<br>        public_netmask     = optional(number, 24)<br>        vpc_cidr           = optional(string, "100.64.0.0/21")<br>      }), null)<br>      spokes_route_table_name = optional(string, "spokes")<br>    }), null)<br>    trusted = optional(object({<br>      trusted_attachments      = optional(list(string), [])<br>      trusted_route_table_name = optional(string, "trusted")<br>    }), null)<br>  })</pre> | n/a | yes |
+| <a name="input_connectivity_config"></a> [connectivity\_config](#input\_connectivity\_config) | The type of connectivity options for the transit gateway. | <pre>object({<br>    egress = optional(object({<br>      network = object({<br>        availability_zones = optional(number, 2)<br>        ipam_pool_id       = optional(string, null)<br>        name               = optional(string, "egress")<br>        private_netmask    = optional(number, 28)<br>        public_netmask     = optional(number, 28)<br>        vpc_cidr           = optional(string, null)<br>        vpc_netmask        = optional(string, null)<br>      })<br>    }), null)<br>    endpoints = optional(object({<br>      network = object({<br>        availability_zones = optional(number, 2)<br>        ipam_pool_id       = optional(string, null)<br>        name               = optional(string, "endpoints")<br>        private_netmask    = optional(number, 24)<br>        vpc_cidr           = optional(string, null)<br>        vpc_netmask        = optional(string, null)<br>      })<br>      sharing = optional(object({<br>        principals = optional(list(string), [])<br>      }), null)<br>      services = optional(map(object({<br>        private_dns_enabled = optional(bool, true)<br>        service_type        = optional(string, "Interface")<br>        service             = string<br>        policy              = optional(string, null)<br>        })), {<br>        ec2 = {<br>          service = "ec2"<br>        },<br>        ec2messages = {<br>          service = "ec2messages"<br>        },<br>        ssm = {<br>          service = "ssm"<br>        },<br>        ssmmessages = {<br>          service = "ssmmessages"<br>        },<br>        logs = {<br>          service = "logs"<br>        },<br>        kms = {<br>          service = "kms"<br>        },<br>        secretsmanager = {<br>          service = "secretsmanager"<br>        },<br>        s3 = {<br>          service = "s3"<br>        },<br>      })<br>    }), null)<br>    ingress = optional(object({<br>      network = object({<br>        availability_zones = optional(number, 2)<br>        ipam_pool_id       = optional(string, null)<br>        name               = optional(string, "ingress")<br>        private_netmask    = number<br>        public_netmask     = number<br>        vpc_cidr           = optional(string, null)<br>        vpc_netmask        = optional(string, null)<br>      })<br>    }), null)<br>    inspection = optional(object({<br>      attachment_id            = optional(string, null)<br>      inbound_route_table_name = optional(string, "inbound")<br>      network = optional(object({<br>        availability_zones = number<br>        name               = optional(string, "inspection")<br>        private_netmask    = optional(number, 24)<br>        public_netmask     = optional(number, 24)<br>        vpc_cidr           = optional(string, "100.64.0.0/21")<br>      }), null)<br>      spokes_route_table_name = optional(string, "spokes")<br>    }), null)<br>    trusted = optional(object({<br>      trusted_attachments      = optional(list(string), [])<br>      trusted_route_table_name = optional(string, "trusted")<br>    }), null)<br>  })</pre> | n/a | yes |
 | <a name="input_description"></a> [description](#input\_description) | The description of the transit gateway to provision. | `string` | n/a | yes |
 | <a name="input_tags"></a> [tags](#input\_tags) | A map of tags to add to all resources. | `map(string)` | n/a | yes |
 | <a name="input_enable_dns_support"></a> [enable\_dns\_support](#input\_enable\_dns\_support) | Whether DNS support is enabled. | `bool` | `true` | no |
@@ -200,6 +319,9 @@ The `terraform-docs` utility is used to generate this README. Follow the below s
 | <a name="output_egress_vpc_id_rt_attributes_by_type_by_az"></a> [egress\_vpc\_id\_rt\_attributes\_by\_type\_by\_az](#output\_egress\_vpc\_id\_rt\_attributes\_by\_type\_by\_az) | The route table attributes of the egress VPC. |
 | <a name="output_egress_vpc_private_subnet_attributes_by_az"></a> [egress\_vpc\_private\_subnet\_attributes\_by\_az](#output\_egress\_vpc\_private\_subnet\_attributes\_by\_az) | The attributes of the egress VPC. |
 | <a name="output_egress_vpc_public_subnet_attributes_by_az"></a> [egress\_vpc\_public\_subnet\_attributes\_by\_az](#output\_egress\_vpc\_public\_subnet\_attributes\_by\_az) | The attributes of the egress VPC. |
+| <a name="output_endpoints_vpc_id"></a> [endpoints\_vpc\_id](#output\_endpoints\_vpc\_id) | The ID of the VPC that is used for endpoint traffic. |
+| <a name="output_endpoints_vpc_id_rt_attributes_by_type_by_az"></a> [endpoints\_vpc\_id\_rt\_attributes\_by\_type\_by\_az](#output\_endpoints\_vpc\_id\_rt\_attributes\_by\_type\_by\_az) | The route table attributes of the endpoints VPC. |
+| <a name="output_endpoints_vpc_private_subnet_attributes_by_az"></a> [endpoints\_vpc\_private\_subnet\_attributes\_by\_az](#output\_endpoints\_vpc\_private\_subnet\_attributes\_by\_az) | The attributes of the endpoints VPC. |
 | <a name="output_ingress_vpc_id"></a> [ingress\_vpc\_id](#output\_ingress\_vpc\_id) | The ID of the VPC that is used for ingress traffic. |
 | <a name="output_ingress_vpc_id_rt_attributes_by_type_by_az"></a> [ingress\_vpc\_id\_rt\_attributes\_by\_type\_by\_az](#output\_ingress\_vpc\_id\_rt\_attributes\_by\_type\_by\_az) | The route table attributes of the ingress VPC. |
 | <a name="output_ingress_vpc_private_subnet_attributes_by_az"></a> [ingress\_vpc\_private\_subnet\_attributes\_by\_az](#output\_ingress\_vpc\_private\_subnet\_attributes\_by\_az) | The attributes of the ingress VPC. |
@@ -210,6 +332,14 @@ The `terraform-docs` utility is used to generate this README. Follow the below s
 | <a name="output_inspection_vpc_public_subnet_attributes_by_az"></a> [inspection\_vpc\_public\_subnet\_attributes\_by\_az](#output\_inspection\_vpc\_public\_subnet\_attributes\_by\_az) | The attributes of the inspection VPC. |
 | <a name="output_transit_gateway_id"></a> [transit\_gateway\_id](#output\_transit\_gateway\_id) | The ID of the transit gateway. |
 <!-- END_TF_DOCS -->
+
+```
+
+```
+
+```
+
+```
 
 ```
 
