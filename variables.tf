@@ -37,6 +37,8 @@ variable "connectivity_config" {
         availability_zones = optional(number, 2)
         ipam_pool_id       = optional(string, null)
         name               = optional(string, "egress")
+        private_netmask    = optional(number, 28)
+        public_netmask     = optional(number, 28)
         vpc_cidr           = optional(string, null)
         vpc_netmask        = optional(string, null)
       })

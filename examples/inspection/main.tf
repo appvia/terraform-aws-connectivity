@@ -22,8 +22,8 @@ module "hub" {
       network = {
         availability_zones = 3
         name               = "inspection"
-        private_netmask    = "24"
-        public_netmask     = "24"
+        private_netmask    = 24
+        public_netmask     = 24
         vpc_cidr           = "100.64.0.0/21"
       }
       #

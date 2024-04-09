@@ -54,11 +54,6 @@ output "endpoints_vpc_private_subnet_attributes_by_az" {
   value       = local.enable_endpoints ? module.endpoints[0].private_subnet_attributes_by_az : null
 }
 
-output "endpoints_vpc_public_subnet_attributes_by_az" {
-  description = "The attributes of the endpoints VPC."
-  value       = local.enable_endpoints ? module.endpoints[0].public_subnet_attributes_by_az : null
-}
-
 output "endpoints_vpc_id_rt_attributes_by_type_by_az" {
   description = "The route table attributes of the endpoints VPC."
   value       = local.enable_endpoints ? module.endpoints[0].rt_attributes_by_type_by_az : null

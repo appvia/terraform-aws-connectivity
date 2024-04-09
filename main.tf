@@ -25,6 +25,7 @@ module "tgw" {
   name                                   = var.name
   amazon_side_asn                        = var.amazon_side_asn
   description                            = var.description
+  create_tgw_routes                      = false
   enable_auto_accept_shared_attachments  = true
   enable_default_route_table_association = true
   enable_default_route_table_propagation = true
@@ -44,37 +45,29 @@ module "tgw" {
 module "egress_vpc" {
   count   = local.enable_egress ? 1 : 0
   source  = "appvia/network/aws"
-  version = "0.1.3"
+  version = "0.1.4"
 
-  availability_zones                    = var.connectivity_config.egress.network.availability_zones
-  enable_ipam                           = var.connectivity_config.egress.network.ipam_pool_id != null
-  enable_nat_gateway                    = true
-  enable_transit_gateway                = true
-  enable_transit_gateway_appliance_mode = true
-  enable_transit_gateway_subnet_natgw   = true
-  ipam_pool_id                          = var.connectivity_config.egress.network.ipam_pool_id
-  name                                  = var.connectivity_config.egress.network.name
-  nat_gateway_mode                      = "all_azs"
-  private_subnet_netmask                = 27
-  public_subnet_netmask                 = 27
-  tags                                  = var.tags
-  transit_gateway_id                    = module.tgw.ec2_transit_gateway_id
-  vpc_cidr                              = var.connectivity_config.egress.network.vpc_cidr
-  vpc_netmask                           = 24
-
-  transit_gateway_routes = {
-    private = "10.0.0.0/8"
-    public  = "10.0.0.0/8"
-  }
-
-  depends_on = [module.tgw]
+  availability_zones                  = var.connectivity_config.egress.network.availability_zones
+  enable_ipam                         = var.connectivity_config.egress.network.ipam_pool_id != null
+  enable_nat_gateway                  = true
+  enable_transit_gateway              = true
+  enable_transit_gateway_subnet_natgw = true
+  ipam_pool_id                        = var.connectivity_config.egress.network.ipam_pool_id
+  name                                = var.connectivity_config.egress.network.name
+  nat_gateway_mode                    = "all_azs"
+  private_subnet_netmask              = var.connectivity_config.egress.network.private_netmask
+  public_subnet_netmask               = var.connectivity_config.egress.network.public_netmask
+  tags                                = var.tags
+  transit_gateway_id                  = module.tgw.ec2_transit_gateway_id
+  vpc_cidr                            = var.connectivity_config.egress.network.vpc_cidr
+  vpc_netmask                         = var.connectivity_config.egress.network.vpc_netmask
 }
 
 ## Provision an ingress vpc if required
 module "ingress_vpc" {
   count   = local.enable_ingress ? 1 : 0
   source  = "appvia/network/aws"
-  version = "0.1.3"
+  version = "0.1.4"
 
   availability_zones     = var.connectivity_config.ingress.network.availability_zones
   enable_ipam            = var.connectivity_config.ingress.network.ipam_pool_id != null
@@ -87,21 +80,14 @@ module "ingress_vpc" {
   tags                   = var.tags
   transit_gateway_id     = module.tgw.ec2_transit_gateway_id
   vpc_cidr               = var.connectivity_config.ingress.network.vpc_cidr
-  vpc_netmask            = 24
-
-  transit_gateway_routes = {
-    private = "0.0.0.0/0"
-    public  = "0.0.0.0/0"
-  }
-
-  depends_on = [module.tgw]
+  vpc_netmask            = var.connectivity_config.ingress.network.vpc_netmask
 }
 
 ## Provsion if requires the shared private endpoints vpc 
 module "endpoints" {
   count   = local.enable_endpoints ? 1 : 0
   source  = "appvia/private-endpoints/aws"
-  version = "0.0.1"
+  version = "0.1.0"
 
   name      = var.connectivity_config.endpoints.network.name
   endpoints = var.connectivity_config.endpoints.services
