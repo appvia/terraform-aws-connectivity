@@ -133,7 +133,7 @@ Notes:
 
 <p align="center">
   </br>
-  <img src="https://raw.githubusercontent.com/appvia/terraform-aws-connectivity/main/docs/egress-vpc.png" alt="Egress VPC">
+  <img src="https://github.com/appvia/terraform-aws-connectivity/blob/feat_endppoints/docs/egress-vpc.png" alt="Egress VPC">
 </p>
 
 By adding a `var.connectivity_config.egress` object, the module will provision the necessary resources to route traffic to the internet via a shared egress VPC. Routing within the choose network layout (inspection, or trusted) is automatically provisioned accordingly.
@@ -161,7 +161,7 @@ module "connectivity" {
 
 <p align="center">
   </br>
-  <img src="https://raw.githubusercontent.com/appvia/terraform-aws-connectivity/main/docs/ingress-vpc.png" alt="Ingress VPC">
+  <img src="https://github.com/appvia/terraform-aws-connectivity/blob/feat_endppoints/docs/ingress-vpc.png" alt="Ingress VPC">
 </p>
 
 By adding a `var.connectivity_config.ingress` object, the module will provision the necessary resources to route traffic from the internet to the tenant VPCs. Routing within the choose network layout (inspection, or trusted) is automatically provisioned accordingly. Note, this module does not provisioned the load balancers and or WAF devices depicted in the diagram; purely the VPC and connectivity.
@@ -319,6 +319,10 @@ The `terraform-docs` utility is used to generate this README. Follow the below s
 | <a name="output_egress_vpc_id_rt_attributes_by_type_by_az"></a> [egress\_vpc\_id\_rt\_attributes\_by\_type\_by\_az](#output\_egress\_vpc\_id\_rt\_attributes\_by\_type\_by\_az) | The route table attributes of the egress VPC. |
 | <a name="output_egress_vpc_private_subnet_attributes_by_az"></a> [egress\_vpc\_private\_subnet\_attributes\_by\_az](#output\_egress\_vpc\_private\_subnet\_attributes\_by\_az) | The attributes of the egress VPC. |
 | <a name="output_egress_vpc_public_subnet_attributes_by_az"></a> [egress\_vpc\_public\_subnet\_attributes\_by\_az](#output\_egress\_vpc\_public\_subnet\_attributes\_by\_az) | The attributes of the egress VPC. |
+| <a name="output_endpoints_vpc_id"></a> [endpoints\_vpc\_id](#output\_endpoints\_vpc\_id) | The ID of the VPC that is used for endpoint traffic. |
+| <a name="output_endpoints_vpc_id_rt_attributes_by_type_by_az"></a> [endpoints\_vpc\_id\_rt\_attributes\_by\_type\_by\_az](#output\_endpoints\_vpc\_id\_rt\_attributes\_by\_type\_by\_az) | The route table attributes of the endpoints VPC. |
+| <a name="output_endpoints_vpc_private_subnet_attributes_by_az"></a> [endpoints\_vpc\_private\_subnet\_attributes\_by\_az](#output\_endpoints\_vpc\_private\_subnet\_attributes\_by\_az) | The attributes of the endpoints VPC. |
+| <a name="output_endpoints_vpc_public_subnet_attributes_by_az"></a> [endpoints\_vpc\_public\_subnet\_attributes\_by\_az](#output\_endpoints\_vpc\_public\_subnet\_attributes\_by\_az) | The attributes of the endpoints VPC. |
 | <a name="output_ingress_vpc_id"></a> [ingress\_vpc\_id](#output\_ingress\_vpc\_id) | The ID of the VPC that is used for ingress traffic. |
 | <a name="output_ingress_vpc_id_rt_attributes_by_type_by_az"></a> [ingress\_vpc\_id\_rt\_attributes\_by\_type\_by\_az](#output\_ingress\_vpc\_id\_rt\_attributes\_by\_type\_by\_az) | The route table attributes of the ingress VPC. |
 | <a name="output_ingress_vpc_private_subnet_attributes_by_az"></a> [ingress\_vpc\_private\_subnet\_attributes\_by\_az](#output\_ingress\_vpc\_private\_subnet\_attributes\_by\_az) | The attributes of the ingress VPC. |
