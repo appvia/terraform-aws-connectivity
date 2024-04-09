@@ -38,6 +38,6 @@ resource "aws_ec2_transit_gateway_route" "inspection_egress" {
   count = local.enable_inspection && local.enable_egress ? 1 : 0
 
   destination_cidr_block         = "0.0.0.0/0"
-  transit_gateway_attachment_id  = local.egress_attachment_id
+  transit_gateway_attachment_id  = module.egress_vpc[0].transit_gateway_attachment_id
   transit_gateway_route_table_id = module.inspection[0].inbound_route_table_id
 }

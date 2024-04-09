@@ -14,7 +14,7 @@ resource "aws_ec2_transit_gateway_route" "trusted_default" {
   count = local.enable_trusted && local.enable_egress ? 1 : 0
 
   destination_cidr_block         = "0.0.0.0/0"
-  transit_gateway_attachment_id  = local.egress_attachment_id
+  transit_gateway_attachment_id  = module.egress_vpc[0].transit_gateway_attachment_id
   transit_gateway_route_table_id = module.trusted[0].transit_gateway_untrusted_route_table_id
 }
 
@@ -23,7 +23,7 @@ resource "aws_ec2_transit_gateway_route" "trusted_route_table" {
   count = local.enable_trusted && local.enable_egress ? 1 : 0
 
   destination_cidr_block         = "0.0.0.0/0"
-  transit_gateway_attachment_id  = local.egress_attachment_id
+  transit_gateway_attachment_id  = module.egress_vpc[0].transit_gateway_attachment_id
   transit_gateway_route_table_id = module.trusted[0].transit_gateway_trusted_route_table_id
 }
 
