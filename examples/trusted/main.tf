@@ -9,18 +9,16 @@ module "hub_trusted" {
 
   name                       = var.name
   description                = "The transit gateway fot all accounts within this region"
-  asn                        = var.asn
+  amazon_side_asn            = var.asn
   enable_dns_support         = true
   enable_external_principals = true
-  enable_ram_share           = true
   enable_multicast_support   = true
   enable_vpn_ecmp_support    = true
-  region                     = var.region
   tags                       = var.tags
 
   connectivity_config = {
     trusted = {
-      trusted_attachments = [var.trusted_attachments]
+      trusted_attachments = var.trusted_attachments
     }
   }
 }

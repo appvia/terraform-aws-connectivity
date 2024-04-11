@@ -26,11 +26,6 @@ module "hub" {
         public_netmask     = 24
         vpc_cidr           = "100.64.0.0/21"
       }
-      #
-      ## If you want to create the inspection vpc independently, create post the transit gateway creation
-      ## and provide the attachment id afterwards
-      # 
-      # attachment_id = "tgw-attach-1234567890"
     }
   }
 }

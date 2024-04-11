@@ -1,22 +1,4 @@
 
-locals {
-  ## Indicates the inspection connectivity layout 
-  enable_inspection = var.connectivity_config.inspection != null
-  ## Indicates the trusted network connectivity layout 
-  enable_trusted = var.connectivity_config.trusted != null
-  ## Indicates if we have egress configuration 
-  enable_egress = var.connectivity_config.egress != null
-  ## Indicates if we have ingress configuration 
-  enable_ingress = var.connectivity_config.ingress != null
-  ## Indicates if we should provision a endpoints vpc 
-  enable_endpoints = var.connectivity_config.endpoints != null
-}
-
-locals {
-  ## Indicates if we should create the inspection vpc 
-  enable_inspection_vpc_creation = local.enable_inspection && try(var.connectivity_config.inspection.network, null) != null
-}
-
 ## Provision the transit gateway
 module "tgw" {
   source  = "terraform-aws-modules/transit-gateway/aws"
@@ -45,7 +27,7 @@ module "tgw" {
 module "egress_vpc" {
   count   = local.enable_egress ? 1 : 0
   source  = "appvia/network/aws"
-  version = "0.1.4"
+  version = "0.1.6"
 
   availability_zones                  = var.connectivity_config.egress.network.availability_zones
   enable_ipam                         = var.connectivity_config.egress.network.ipam_pool_id != null
@@ -67,7 +49,7 @@ module "egress_vpc" {
 module "ingress_vpc" {
   count   = local.enable_ingress ? 1 : 0
   source  = "appvia/network/aws"
-  version = "0.1.4"
+  version = "0.1.6"
 
   availability_zones     = var.connectivity_config.ingress.network.availability_zones
   enable_ipam            = var.connectivity_config.ingress.network.ipam_pool_id != null
@@ -83,45 +65,10 @@ module "ingress_vpc" {
   vpc_netmask            = var.connectivity_config.ingress.network.vpc_netmask
 }
 
-## Provsion if requires the shared private endpoints vpc 
-module "endpoints" {
-  count   = local.enable_endpoints ? 1 : 0
-  source  = "appvia/private-endpoints/aws"
-  version = "0.1.0"
-
-  name      = var.connectivity_config.endpoints.network.name
-  endpoints = var.connectivity_config.endpoints.services
-  tags      = var.tags
-
-  network = {
-    availability_zones = var.connectivity_config.endpoints.network.availability_zones
-    create             = true
-    ipam_pool_id       = var.connectivity_config.endpoints.network.ipam_pool_id
-    name               = var.connectivity_config.endpoints.network.name
-    private_netmask    = var.connectivity_config.endpoints.network.private_netmask
-    transit_gateway_id = module.tgw.ec2_transit_gateway_id
-    vpc_cidr           = var.connectivity_config.endpoints.network.vpc_cidr
-    vpc_netmask        = var.connectivity_config.endpoints.network.vpc_netmask
-  }
-
-  resolvers = {
-    inbound = {
-      create            = true
-      ip_address_offset = 10
-    }
-    outbound = {
-      create            = true
-      ip_address_offset = 12
-    }
-  }
-}
-
 ## Share the transit gateway with the other principals 
 resource "aws_ram_principal_association" "associations" {
   for_each = toset(var.ram_share_principals)
 
   principal          = each.value
   resource_share_arn = module.tgw.ram_resource_share_id
-
-  depends_on = [module.tgw]
 }

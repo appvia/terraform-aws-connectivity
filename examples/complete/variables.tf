@@ -2,7 +2,7 @@
 variable "name" {
   description = "The name of the transit gateway to provision."
   type        = string
-  default     = "main-hub"
+  default     = "tgw"
 }
 
 variable "asn" {

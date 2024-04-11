@@ -16,6 +16,12 @@ variable "asn" {
   }
 }
 
+variable "trusted_attachments" {
+  description = "The list of trusted account IDs."
+  type        = list(string)
+  default     = []
+}
+
 variable "tags" {
   description = "A map of tags to assign to the resources."
   type        = map(string)

@@ -82,11 +82,11 @@ module "connectivity" {
   connectivity_config = {
     inspection = {
       network = {
-        availability_zones     = 2
-        vpc_cidr               = "100.64.0.0/23"
-        name                   = "inspection"
-        private_subnet_netmask = 24
-        public_subnet_netmask  = 24
+        availability_zones = 2
+        vpc_cidr           = "100.64.0.0/21"
+        name               = "inspection"
+        private_netmask    = 24
+        public_netmask     = 24
       }
     }
     egress = {
@@ -271,14 +271,13 @@ The `terraform-docs` utility is used to generate this README. Follow the below s
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_egress_vpc"></a> [egress\_vpc](#module\_egress\_vpc) | appvia/network/aws | 0.1.4 |
-| <a name="module_endpoints"></a> [endpoints](#module\_endpoints) | appvia/private-endpoints/aws | 0.1.0 |
-| <a name="module_ingress_vpc"></a> [ingress\_vpc](#module\_ingress\_vpc) | appvia/network/aws | 0.1.4 |
-| <a name="module_inspection"></a> [inspection](#module\_inspection) | ./modules/tgw_inspection | n/a |
-| <a name="module_inspection_vpc"></a> [inspection\_vpc](#module\_inspection\_vpc) | appvia/network/aws | 0.1.3 |
+| <a name="module_egress_vpc"></a> [egress\_vpc](#module\_egress\_vpc) | appvia/network/aws | 0.1.6 |
+| <a name="module_endpoints"></a> [endpoints](#module\_endpoints) | appvia/private-endpoints/aws | 0.1.2 |
+| <a name="module_endpoints_vpc"></a> [endpoints\_vpc](#module\_endpoints\_vpc) | appvia/network/aws | 0.1.6 |
+| <a name="module_ingress_vpc"></a> [ingress\_vpc](#module\_ingress\_vpc) | appvia/network/aws | 0.1.6 |
+| <a name="module_inspection_vpc"></a> [inspection\_vpc](#module\_inspection\_vpc) | appvia/network/aws | 0.1.6 |
 | <a name="module_share_prefixes"></a> [share\_prefixes](#module\_share\_prefixes) | ./modules/prefix_share | n/a |
 | <a name="module_tgw"></a> [tgw](#module\_tgw) | terraform-aws-modules/transit-gateway/aws | 2.12.2 |
-| <a name="module_trusted"></a> [trusted](#module\_trusted) | ./modules/tgw_trusted | n/a |
 
 ## Resources
 
@@ -286,8 +285,26 @@ The `terraform-docs` utility is used to generate this README. Follow the below s
 |------|------|
 | [aws_ec2_managed_prefix_list.prefixes](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ec2_managed_prefix_list) | resource |
 | [aws_ec2_transit_gateway_route.inspection_egress](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ec2_transit_gateway_route) | resource |
+| [aws_ec2_transit_gateway_route.inspection_inbound](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ec2_transit_gateway_route) | resource |
 | [aws_ec2_transit_gateway_route.trusted_default](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ec2_transit_gateway_route) | resource |
 | [aws_ec2_transit_gateway_route.trusted_route_table](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ec2_transit_gateway_route) | resource |
+| [aws_ec2_transit_gateway_route_table.inspection_return](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ec2_transit_gateway_route_table) | resource |
+| [aws_ec2_transit_gateway_route_table.trusted](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ec2_transit_gateway_route_table) | resource |
+| [aws_ec2_transit_gateway_route_table_association.inspection_egress](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ec2_transit_gateway_route_table_association) | resource |
+| [aws_ec2_transit_gateway_route_table_association.inspection_endpoints](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ec2_transit_gateway_route_table_association) | resource |
+| [aws_ec2_transit_gateway_route_table_association.inspection_inbound](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ec2_transit_gateway_route_table_association) | resource |
+| [aws_ec2_transit_gateway_route_table_association.inspection_ingress](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ec2_transit_gateway_route_table_association) | resource |
+| [aws_ec2_transit_gateway_route_table_association.trusted](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ec2_transit_gateway_route_table_association) | resource |
+| [aws_ec2_transit_gateway_route_table_association.trusted_egress](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ec2_transit_gateway_route_table_association) | resource |
+| [aws_ec2_transit_gateway_route_table_association.trusted_endpoints](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ec2_transit_gateway_route_table_association) | resource |
+| [aws_ec2_transit_gateway_route_table_association.trusted_ingress](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ec2_transit_gateway_route_table_association) | resource |
+| [aws_ec2_transit_gateway_route_table_propagation.inspection_egress](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ec2_transit_gateway_route_table_propagation) | resource |
+| [aws_ec2_transit_gateway_route_table_propagation.inspection_endpoints](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ec2_transit_gateway_route_table_propagation) | resource |
+| [aws_ec2_transit_gateway_route_table_propagation.inspection_ingress](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ec2_transit_gateway_route_table_propagation) | resource |
+| [aws_ec2_transit_gateway_route_table_propagation.trusted_egress](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ec2_transit_gateway_route_table_propagation) | resource |
+| [aws_ec2_transit_gateway_route_table_propagation.trusted_endpoints](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ec2_transit_gateway_route_table_propagation) | resource |
+| [aws_ec2_transit_gateway_route_table_propagation.trusted_ingress](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ec2_transit_gateway_route_table_propagation) | resource |
+| [aws_ec2_transit_gateway_route_table_propagation.untrusted](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ec2_transit_gateway_route_table_propagation) | resource |
 | [aws_ram_principal_association.associations](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ram_principal_association) | resource |
 | [aws_ram_resource_association.prefixes](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ram_resource_association) | resource |
 | [aws_ram_resource_share.prefixes](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ram_resource_share) | resource |
@@ -297,17 +314,17 @@ The `terraform-docs` utility is used to generate this README. Follow the below s
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_amazon_side_asn"></a> [amazon\_side\_asn](#input\_amazon\_side\_asn) | The ASN for the transit gateway. | `number` | n/a | yes |
-| <a name="input_connectivity_config"></a> [connectivity\_config](#input\_connectivity\_config) | The type of connectivity options for the transit gateway. | <pre>object({<br>    egress = optional(object({<br>      network = object({<br>        availability_zones = optional(number, 2)<br>        ipam_pool_id       = optional(string, null)<br>        name               = optional(string, "egress")<br>        private_netmask    = optional(number, 28)<br>        public_netmask     = optional(number, 28)<br>        vpc_cidr           = optional(string, null)<br>        vpc_netmask        = optional(string, null)<br>      })<br>    }), null)<br>    endpoints = optional(object({<br>      network = object({<br>        availability_zones = optional(number, 2)<br>        ipam_pool_id       = optional(string, null)<br>        name               = optional(string, "endpoints")<br>        private_netmask    = optional(number, 24)<br>        vpc_cidr           = optional(string, null)<br>        vpc_netmask        = optional(string, null)<br>      })<br>      sharing = optional(object({<br>        principals = optional(list(string), [])<br>      }), null)<br>      services = optional(map(object({<br>        private_dns_enabled = optional(bool, true)<br>        service_type        = optional(string, "Interface")<br>        service             = string<br>        policy              = optional(string, null)<br>        })), {<br>        ec2 = {<br>          service = "ec2"<br>        },<br>        ec2messages = {<br>          service = "ec2messages"<br>        },<br>        ssm = {<br>          service = "ssm"<br>        },<br>        ssmmessages = {<br>          service = "ssmmessages"<br>        },<br>        logs = {<br>          service = "logs"<br>        },<br>        kms = {<br>          service = "kms"<br>        },<br>        secretsmanager = {<br>          service = "secretsmanager"<br>        },<br>        s3 = {<br>          service = "s3"<br>        },<br>      })<br>    }), null)<br>    ingress = optional(object({<br>      network = object({<br>        availability_zones = optional(number, 2)<br>        ipam_pool_id       = optional(string, null)<br>        name               = optional(string, "ingress")<br>        private_netmask    = number<br>        public_netmask     = number<br>        vpc_cidr           = optional(string, null)<br>        vpc_netmask        = optional(string, null)<br>      })<br>    }), null)<br>    inspection = optional(object({<br>      attachment_id            = optional(string, null)<br>      inbound_route_table_name = optional(string, "inbound")<br>      network = optional(object({<br>        availability_zones = number<br>        name               = optional(string, "inspection")<br>        private_netmask    = optional(number, 24)<br>        public_netmask     = optional(number, 24)<br>        vpc_cidr           = optional(string, "100.64.0.0/21")<br>      }), null)<br>      spokes_route_table_name = optional(string, "spokes")<br>    }), null)<br>    trusted = optional(object({<br>      trusted_attachments      = optional(list(string), [])<br>      trusted_route_table_name = optional(string, "trusted")<br>    }), null)<br>  })</pre> | n/a | yes |
+| <a name="input_connectivity_config"></a> [connectivity\_config](#input\_connectivity\_config) | The type of connectivity options for the transit gateway. | <pre>object({<br>    egress = optional(object({<br>      network = object({<br>        availability_zones = optional(number, 2)<br>        ipam_pool_id       = optional(string, null)<br>        name               = optional(string, "egress")<br>        private_netmask    = optional(number, 28)<br>        public_netmask     = optional(number, 28)<br>        vpc_cidr           = optional(string, null)<br>        vpc_netmask        = optional(string, null)<br>      })<br>    }), null)<br>    endpoints = optional(object({<br>      network = object({<br>        availability_zones = optional(number, 2)<br>        ipam_pool_id       = optional(string, null)<br>        name               = optional(string, "endpoints")<br>        private_netmask    = optional(number, 24)<br>        vpc_cidr           = optional(string, null)<br>        vpc_netmask        = optional(string, null)<br>      })<br>      sharing = optional(object({<br>        principals = optional(list(string), [])<br>      }), null)<br>      services = optional(map(object({<br>        private_dns_enabled = optional(bool, true)<br>        service_type        = optional(string, "Interface")<br>        service             = string<br>        policy              = optional(string, null)<br>        })), {<br>        ec2 = {<br>          service = "ec2"<br>        },<br>        ec2messages = {<br>          service = "ec2messages"<br>        },<br>        ssm = {<br>          service = "ssm"<br>        },<br>        ssmmessages = {<br>          service = "ssmmessages"<br>        },<br>        logs = {<br>          service = "logs"<br>        },<br>        kms = {<br>          service = "kms"<br>        },<br>        secretsmanager = {<br>          service = "secretsmanager"<br>        },<br>        s3 = {<br>          service = "s3"<br>        },<br>      })<br>    }), null)<br>    ingress = optional(object({<br>      network = object({<br>        availability_zones = optional(number, 2)<br>        ipam_pool_id       = optional(string, null)<br>        name               = optional(string, "ingress")<br>        private_netmask    = number<br>        public_netmask     = number<br>        vpc_cidr           = optional(string, null)<br>        vpc_netmask        = optional(string, null)<br>      })<br>    }), null)<br>    inspection = optional(object({<br>      inbound_route_table_name = optional(string, "inbound")<br>      network = optional(object({<br>        availability_zones = number<br>        name               = optional(string, "inspection")<br>        private_netmask    = optional(number, 24)<br>        vpc_cidr           = optional(string, "100.64.0.0/21")<br>      }), null)<br>      spokes_route_table_name = optional(string, "spokes")<br>    }), null)<br>    trusted = optional(object({<br>      trusted_attachments      = optional(list(string), [])<br>      trusted_route_table_name = optional(string, "trusted")<br>    }), null)<br>  })</pre> | n/a | yes |
 | <a name="input_description"></a> [description](#input\_description) | The description of the transit gateway to provision. | `string` | n/a | yes |
 | <a name="input_tags"></a> [tags](#input\_tags) | A map of tags to add to all resources. | `map(string)` | n/a | yes |
 | <a name="input_enable_dns_support"></a> [enable\_dns\_support](#input\_enable\_dns\_support) | Whether DNS support is enabled. | `bool` | `true` | no |
 | <a name="input_enable_external_principals"></a> [enable\_external\_principals](#input\_enable\_external\_principals) | Whether to enable external principals in the RAM share. | `bool` | `true` | no |
 | <a name="input_enable_multicast_support"></a> [enable\_multicast\_support](#input\_enable\_multicast\_support) | Whether multicast support is enabled. | `bool` | `false` | no |
 | <a name="input_enable_vpn_ecmp_support"></a> [enable\_vpn\_ecmp\_support](#input\_enable\_vpn\_ecmp\_support) | Whether VPN Equal Cost Multipath Protocol support is enabled. | `bool` | `false` | no |
-| <a name="input_name"></a> [name](#input\_name) | The name of the transit gateway to provision. | `string` | `"tgw-hub"` | no |
+| <a name="input_name"></a> [name](#input\_name) | The name of the transit gateway to provision. | `string` | `"tgw"` | no |
 | <a name="input_prefix_lists"></a> [prefix\_lists](#input\_prefix\_lists) | Provides the ability to provision prefix lists, and share them with other accounts. | <pre>list(object({<br>    name = string<br>    entry = list(object({<br>      address_family = optional(string, "IPv4")<br>      cidr           = string<br>      description    = string<br>      max_entries    = number<br>    }))<br>  }))</pre> | `[]` | no |
 | <a name="input_prefix_ram_principals"></a> [prefix\_ram\_principals](#input\_prefix\_ram\_principals) | The list of organizational units or accounts to share the prefix lists with. | `list(string)` | `[]` | no |
-| <a name="input_ram_share_name"></a> [ram\_share\_name](#input\_ram\_share\_name) | The name of the RAM share to create for the transit gateway. | `string` | `"tgw-hub-ram-share"` | no |
+| <a name="input_ram_share_name"></a> [ram\_share\_name](#input\_ram\_share\_name) | The name of the RAM share to create for the transit gateway. | `string` | `"tgw-ram-share"` | no |
 | <a name="input_ram_share_principals"></a> [ram\_share\_principals](#input\_ram\_share\_principals) | The list of organizational units or accounts to share the transit gateway with. | `list(string)` | `[]` | no |
 
 ## Outputs
