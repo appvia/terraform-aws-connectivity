@@ -272,7 +272,7 @@ The `terraform-docs` utility is used to generate this README. Follow the below s
 | Name | Source | Version |
 |------|--------|---------|
 | <a name="module_egress_vpc"></a> [egress\_vpc](#module\_egress\_vpc) | appvia/network/aws | 0.1.6 |
-| <a name="module_endpoints"></a> [endpoints](#module\_endpoints) | appvia/private-endpoints/aws | 0.1.2 |
+| <a name="module_endpoints"></a> [endpoints](#module\_endpoints) | appvia/private-endpoints/aws | 0.1.4 |
 | <a name="module_endpoints_vpc"></a> [endpoints\_vpc](#module\_endpoints\_vpc) | appvia/network/aws | 0.1.6 |
 | <a name="module_ingress_vpc"></a> [ingress\_vpc](#module\_ingress\_vpc) | appvia/network/aws | 0.1.6 |
 | <a name="module_inspection_vpc"></a> [inspection\_vpc](#module\_inspection\_vpc) | appvia/network/aws | 0.1.6 |
