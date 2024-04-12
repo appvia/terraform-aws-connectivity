@@ -61,22 +61,22 @@ output "endpoints_vpc_id_rt_attributes_by_type_by_az" {
 
 output "inspection_vpc_id" {
   description = "The ID of the VPC that is used for inspection traffic."
-  value       = local.enable_inspection_vpc_creation ? module.inspection_vpc[0].vpc_id : null
+  value       = local.enable_inspection ? module.inspection_vpc[0].vpc_id : null
 }
 
 output "inspection_vpc_private_subnet_attributes_by_az" {
   description = "The attributes of the inspection VPC."
-  value       = local.enable_inspection_vpc_creation ? module.inspection_vpc[0].private_subnet_attributes_by_az : null
+  value       = local.enable_inspection ? module.inspection_vpc[0].private_subnet_attributes_by_az : null
 }
 
 output "inspection_vpc_public_subnet_attributes_by_az" {
   description = "The attributes of the inspection VPC."
-  value       = local.enable_inspection_vpc_creation ? module.inspection_vpc[0].public_subnet_attributes_by_az : null
+  value       = local.enable_inspection ? module.inspection_vpc[0].public_subnet_attributes_by_az : null
 }
 
 output "inspection_vpc_id_rt_attributes_by_type_by_az" {
   description = "The route table attributes of the inspection VPC."
-  value       = local.enable_inspection_vpc_creation ? module.inspection_vpc[0].rt_attributes_by_type_by_az : null
+  value       = local.enable_inspection ? module.inspection_vpc[0].rt_attributes_by_type_by_az : null
 }
 
 output "transit_gateway_id" {

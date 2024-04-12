@@ -99,13 +99,11 @@ variable "connectivity_config" {
       })
     }), null)
     inspection = optional(object({
-      attachment_id            = optional(string, null)
       inbound_route_table_name = optional(string, "inbound")
       network = optional(object({
         availability_zones = number
         name               = optional(string, "inspection")
         private_netmask    = optional(number, 24)
-        public_netmask     = optional(number, 24)
         vpc_cidr           = optional(string, "100.64.0.0/21")
       }), null)
       spokes_route_table_name = optional(string, "spokes")
@@ -149,13 +147,13 @@ variable "enable_vpn_ecmp_support" {
 variable "name" {
   description = "The name of the transit gateway to provision."
   type        = string
-  default     = "tgw-hub"
+  default     = "tgw"
 }
 
 variable "ram_share_name" {
   description = "The name of the RAM share to create for the transit gateway."
   type        = string
-  default     = "tgw-hub-ram-share"
+  default     = "tgw-ram-share"
 }
 
 variable "ram_share_principals" {

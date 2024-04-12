@@ -38,15 +38,18 @@ module "hub" {
       }
     }
 
-    trusted = {
-      trusted_attachments = []
+    inspection = {
+      network = {
+        availability_zones     = 3
+        vpc_cidr               = "100.64.0.0/21"
+        name                   = "inspection"
+        private_subnet_netmask = 24
+        public_subnet_netmask  = 24
+      }
     }
 
     endpoints = {
       services = {
-        ec2 = {
-          service = "ec2"
-        },
         ec2messages = {
           service = "ec2messages"
         },
