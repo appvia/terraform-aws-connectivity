@@ -19,7 +19,7 @@ module "endpoints_vpc" {
 module "endpoints" {
   count   = local.enable_endpoints ? 1 : 0
   source  = "appvia/private-endpoints/aws"
-  version = "0.1.3"
+  version = "0.1.4"
 
   name      = var.connectivity_config.endpoints.network.name
   endpoints = var.connectivity_config.endpoints.services
