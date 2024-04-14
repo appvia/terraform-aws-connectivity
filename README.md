@@ -133,7 +133,7 @@ Notes:
 
 <p align="center">
   </br>
-  <img src="https://github.com/appvia/terraform-aws-connectivity/blob/feat_endppoints/docs/egress-vpc.png" alt="Egress VPC">
+  <img src="https://github.com/appvia/terraform-aws-connectivity/blob/main/docs/egress-vpc.png" alt="Egress VPC">
 </p>
 
 By adding a `var.connectivity_config.egress` object, the module will provision the necessary resources to route traffic to the internet via a shared egress VPC. Routing within the choose network layout (inspection, or trusted) is automatically provisioned accordingly.
@@ -161,7 +161,7 @@ module "connectivity" {
 
 <p align="center">
   </br>
-  <img src="https://github.com/appvia/terraform-aws-connectivity/blob/feat_endppoints/docs/ingress-vpc.png" alt="Ingress VPC">
+  <img src="https://github.com/appvia/terraform-aws-connectivity/blob/main/docs/ingress-vpc.png" alt="Ingress VPC">
 </p>
 
 By adding a `var.connectivity_config.ingress` object, the module will provision the necessary resources to route traffic from the internet to the tenant VPCs. Routing within the choose network layout (inspection, or trusted) is automatically provisioned accordingly. Note, this module does not provisioned the load balancers and or WAF devices depicted in the diagram; purely the VPC and connectivity.
