@@ -3,7 +3,7 @@
 module "endpoints_vpc" {
   count   = local.enable_endpoints ? 1 : 0
   source  = "appvia/network/aws"
-  version = "0.1.6"
+  version = "0.2.1"
 
   availability_zones                    = var.connectivity_config.endpoints.network.availability_zones
   enable_transit_gateway                = true
