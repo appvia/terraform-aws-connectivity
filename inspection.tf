@@ -3,7 +3,7 @@
 module "inspection_vpc" {
   count   = local.enable_inspection ? 1 : 0
   source  = "appvia/network/aws"
-  version = "0.2.1"
+  version = "0.2.2"
 
   availability_zones                     = var.connectivity_config.inspection.network.availability_zones
   enable_default_route_table_association = false
