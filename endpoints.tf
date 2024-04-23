@@ -3,7 +3,7 @@
 module "endpoints_vpc" {
   count   = local.enable_endpoints ? 1 : 0
   source  = "appvia/network/aws"
-  version = "0.2.1"
+  version = "0.3.0"
 
   availability_zones                    = var.connectivity_config.endpoints.network.availability_zones
   enable_transit_gateway                = true
@@ -19,7 +19,7 @@ module "endpoints_vpc" {
 module "endpoints" {
   count   = local.enable_endpoints ? 1 : 0
   source  = "appvia/private-endpoints/aws"
-  version = "0.1.4"
+  version = "0.2.1"
 
   name      = var.connectivity_config.endpoints.network.name
   endpoints = var.connectivity_config.endpoints.services
@@ -31,13 +31,9 @@ module "endpoints" {
   }
 
   resolvers = {
-    inbound = {
-      create            = true
-      ip_address_offset = 10
-    }
     outbound = {
       create            = true
-      ip_address_offset = 12
+      ip_address_offset = 10
     }
   }
 }
