@@ -5,17 +5,19 @@ module "endpoints_vpc" {
   source  = "appvia/network/aws"
   version = "0.3.0"
 
-  availability_zones                    = var.connectivity_config.endpoints.network.availability_zones
-  enable_ipam                           = var.connectivity_config.endpoints.network.ipam_pool_id != null
-  enable_transit_gateway                = true
-  enable_transit_gateway_appliance_mode = true
-  ipam_pool_id                          = var.connectivity_config.endpoints.network.ipam_pool_id
-  name                                  = var.connectivity_config.endpoints.network.name
-  private_subnet_netmask                = var.connectivity_config.endpoints.network.private_netmask
-  tags                                  = var.tags
-  transit_gateway_id                    = module.tgw.ec2_transit_gateway_id
-  vpc_cidr                              = var.connectivity_config.endpoints.network.vpc_cidr
-  vpc_netmask                           = var.connectivity_config.endpoints.network.vpc_netmask
+  availability_zones                     = var.connectivity_config.endpoints.network.availability_zones
+  enable_default_route_table_association = false
+  enable_default_route_table_propagation = false
+  enable_ipam                            = var.connectivity_config.endpoints.network.ipam_pool_id != null
+  enable_transit_gateway                 = true
+  enable_transit_gateway_appliance_mode  = true
+  ipam_pool_id                           = var.connectivity_config.endpoints.network.ipam_pool_id
+  name                                   = var.connectivity_config.endpoints.network.name
+  private_subnet_netmask                 = var.connectivity_config.endpoints.network.private_netmask
+  tags                                   = var.tags
+  transit_gateway_id                     = module.tgw.ec2_transit_gateway_id
+  vpc_cidr                               = var.connectivity_config.endpoints.network.vpc_cidr
+  vpc_netmask                            = var.connectivity_config.endpoints.network.vpc_netmask
 }
 
 ## Provision if required the shared private endpoints
