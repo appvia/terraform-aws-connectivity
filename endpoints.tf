@@ -19,15 +19,17 @@ module "endpoints_vpc" {
 module "endpoints" {
   count   = local.enable_endpoints ? 1 : 0
   source  = "appvia/private-endpoints/aws"
-  version = "0.2.1"
+  version = "0.2.2"
 
   name      = var.connectivity_config.endpoints.network.name
   endpoints = var.connectivity_config.endpoints.services
   tags      = var.tags
 
   network = {
-    private_subnet_cidrs = module.endpoints_vpc[0].private_subnet_cidrs
-    vpc_id               = module.endpoints_vpc[0].vpc_id
+    create                    = false
+    private_subnet_cidr_by_id = module.endpoints_vpc[0].private_subnet_cidr_by_id
+    transit_gateway_id        = module.tgw.ec2_transit_gateway_id
+    vpc_id                    = module.endpoints_vpc[0].vpc_id
   }
 
   resolvers = {
