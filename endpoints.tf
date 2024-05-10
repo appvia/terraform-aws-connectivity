@@ -43,4 +43,8 @@ module "endpoints" {
       ip_address_offset = 10
     }
   }
+
+  sharing = {
+    principals = values(var.connectivity_config.endpoints.sharing.principals)
+  }
 }
