@@ -8,11 +8,13 @@ module "endpoints_vpc" {
   availability_zones                    = var.connectivity_config.endpoints.network.availability_zones
   enable_transit_gateway                = true
   enable_transit_gateway_appliance_mode = true
+  enable_ipam                           = var.connectivity_config.endpoints.network.ipam_pool_id != null
   name                                  = var.connectivity_config.endpoints.network.name
   private_subnet_netmask                = var.connectivity_config.endpoints.network.private_netmask
   tags                                  = var.tags
   transit_gateway_id                    = module.tgw.ec2_transit_gateway_id
   vpc_cidr                              = var.connectivity_config.endpoints.network.vpc_cidr
+  vpc_netmask                           = var.connectivity_config.endpoints.network.vpc_netmask
 }
 
 ## Provision if required the shared private endpoints
