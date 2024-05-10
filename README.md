@@ -51,7 +51,7 @@ The inspection layout is intended to be used in collaboration with an [Inspectio
 ```hcl
 module "connectivity" {
   source  = "appvia/connectivity/aws"
-  version = "0.0.2""
+  version = "0.1.7""
 
   # insert variables here
   connectivity_config = {
@@ -275,7 +275,7 @@ The `terraform-docs` utility is used to generate this README. Follow the below s
 | <a name="module_endpoints"></a> [endpoints](#module\_endpoints) | appvia/private-endpoints/aws | 0.2.2 |
 | <a name="module_endpoints_vpc"></a> [endpoints\_vpc](#module\_endpoints\_vpc) | appvia/network/aws | 0.3.0 |
 | <a name="module_ingress_vpc"></a> [ingress\_vpc](#module\_ingress\_vpc) | appvia/network/aws | 0.3.0 |
-| <a name="module_inspection_vpc"></a> [inspection\_vpc](#module\_inspection\_vpc) | appvia/network/aws | 0.2.1 |
+| <a name="module_inspection_vpc"></a> [inspection\_vpc](#module\_inspection\_vpc) | appvia/network/aws | 0.3.0 |
 | <a name="module_share_prefixes"></a> [share\_prefixes](#module\_share\_prefixes) | ./modules/prefix_share | n/a |
 | <a name="module_tgw"></a> [tgw](#module\_tgw) | terraform-aws-modules/transit-gateway/aws | 2.12.2 |
 
