@@ -6,9 +6,10 @@ module "endpoints_vpc" {
   version = "0.3.0"
 
   availability_zones                    = var.connectivity_config.endpoints.network.availability_zones
+  enable_ipam                           = var.connectivity_config.endpoints.network.ipam_pool_id != null
   enable_transit_gateway                = true
   enable_transit_gateway_appliance_mode = true
-  enable_ipam                           = var.connectivity_config.endpoints.network.ipam_pool_id != null
+  ipam_pool_id                          = var.connectivity_config.endpoints.network.ipam_pool_id
   name                                  = var.connectivity_config.endpoints.network.name
   private_subnet_netmask                = var.connectivity_config.endpoints.network.private_netmask
   tags                                  = var.tags
