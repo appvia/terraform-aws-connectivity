@@ -45,6 +45,6 @@ module "endpoints" {
   }
 
   sharing = {
-    principals = values(var.connectivity_config.endpoints.sharing.principals)
+    principals = var.connectivity_config.endpoints.sharing.principals
   }
 }
