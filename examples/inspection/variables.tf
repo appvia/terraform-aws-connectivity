@@ -19,5 +19,8 @@ variable "asn" {
 variable "tags" {
   description = "A map of tags to assign to the resources."
   type        = map(string)
-  default     = {}
+  default = {
+    Environment = "test"
+    GitRepo     = "https://github.com/appvia/terraform-aws-connectivity"
+  }
 }
