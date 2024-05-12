@@ -29,8 +29,8 @@ variable "prefix_ram_principals" {
   default     = []
 }
 
-variable "connectivity_config" {
-  description = "The type of connectivity options for the transit gateway."
+variable "services" {
+  description = "A collection of features and services associated with this connectivity domain."
   type = object({
     egress = optional(object({
       network = object({
@@ -84,9 +84,6 @@ variable "connectivity_config" {
         policy = optional(string, null)
         # An optional IAM policy to use for the endpoint. Defaults to null.
         })), {
-        ec2 = {
-          service = "ec2"
-        },
         ec2messages = {
           service = "ec2messages"
         },
@@ -95,18 +92,6 @@ variable "connectivity_config" {
         },
         ssmmessages = {
           service = "ssmmessages"
-        },
-        logs = {
-          service = "logs"
-        },
-        kms = {
-          service = "kms"
-        },
-        secretsmanager = {
-          service = "secretsmanager"
-        },
-        s3 = {
-          service = "s3"
         },
       })
     }), null)
@@ -130,9 +115,14 @@ variable "connectivity_config" {
         # The netmask to use for the VPC. Defaults to null, required when using IPAM 
       })
     }), null)
-    inspection = optional(object({
-      # Defines the configuration for the inspection network. 
-      inbound_route_table_name = optional(string, "inbound")
+  })
+  default = {}
+}
+
+variable "connectivity_config" {
+  description = "The type of connectivity options for the transit gateway."
+  type = object({
+    inspection_with_all = optional(object({
       # The name of the inbound route table. Defaults to 'inbound'. 
       network = optional(object({
         # Defines the configuration for the inspection network. 
@@ -146,15 +136,16 @@ variable "connectivity_config" {
         vpc_cidr = optional(string, "100.64.0.0/21")
         # The CIDR block to use for the VPC. Defaults to carrier-grade NAT space. 
       }), null)
-      spokes_route_table_name = optional(string, "spokes")
-      # The name of the spokes route table. Defaults to 'spokes'. 
+      return_route_table_name = optional(string, "inspection-return")
     }), null)
+
     trusted = optional(object({
       # Defines the configuration for the trusted routing
       trusted_attachments = optional(list(string), [])
       # The list of transit gateway attachments to trust e.g can see all the other untrusted networks. Defaults to an empty list.
       trusted_route_table_name = optional(string, "trusted")
       # The name of the trusted route table. Defaults to 'trusted'.
+      trusted_core_route_table_name = optional(string, "trusted-core")
     }), null)
   })
 }

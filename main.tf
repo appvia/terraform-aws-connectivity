@@ -1,5 +1,5 @@
 
-## Provision the transit gateway
+## Provision the transit gateway for this region 
 module "tgw" {
   source  = "terraform-aws-modules/transit-gateway/aws"
   version = "2.12.2"
@@ -29,22 +29,22 @@ module "egress_vpc" {
   source  = "appvia/network/aws"
   version = "0.3.0"
 
-  availability_zones                     = var.connectivity_config.egress.network.availability_zones
-  enable_default_route_table_association = false
-  enable_default_route_table_propagation = false
-  enable_ipam                            = var.connectivity_config.egress.network.ipam_pool_id != null
+  availability_zones                     = var.services.egress.network.availability_zones
+  enable_default_route_table_association = local.enable_default_route_table_association
+  enable_default_route_table_propagation = local.enable_default_route_table_propagation
+  enable_ipam                            = var.services.egress.network.ipam_pool_id != null
   enable_nat_gateway                     = true
   enable_transit_gateway                 = true
   enable_transit_gateway_subnet_natgw    = true
-  ipam_pool_id                           = var.connectivity_config.egress.network.ipam_pool_id
-  name                                   = var.connectivity_config.egress.network.name
+  ipam_pool_id                           = var.services.egress.network.ipam_pool_id
+  name                                   = var.services.egress.network.name
   nat_gateway_mode                       = "all_azs"
-  private_subnet_netmask                 = var.connectivity_config.egress.network.private_netmask
-  public_subnet_netmask                  = var.connectivity_config.egress.network.public_netmask
+  private_subnet_netmask                 = var.services.egress.network.private_netmask
+  public_subnet_netmask                  = var.services.egress.network.public_netmask
   tags                                   = var.tags
   transit_gateway_id                     = module.tgw.ec2_transit_gateway_id
-  vpc_cidr                               = var.connectivity_config.egress.network.vpc_cidr
-  vpc_netmask                            = var.connectivity_config.egress.network.vpc_netmask
+  vpc_cidr                               = var.services.egress.network.vpc_cidr
+  vpc_netmask                            = var.services.egress.network.vpc_netmask
 }
 
 ## Provision an ingress vpc if required
@@ -53,20 +53,20 @@ module "ingress_vpc" {
   source  = "appvia/network/aws"
   version = "0.3.0"
 
-  availability_zones                     = var.connectivity_config.ingress.network.availability_zones
-  enable_default_route_table_association = false
-  enable_default_route_table_propagation = false
-  enable_ipam                            = var.connectivity_config.ingress.network.ipam_pool_id != null
+  availability_zones                     = var.services.ingress.network.availability_zones
+  enable_default_route_table_association = local.enable_default_route_table_association
+  enable_default_route_table_propagation = local.enable_default_route_table_propagation
+  enable_ipam                            = var.services.ingress.network.ipam_pool_id != null
   enable_nat_gateway                     = false
   enable_transit_gateway                 = true
-  ipam_pool_id                           = var.connectivity_config.ingress.network.ipam_pool_id
-  name                                   = var.connectivity_config.ingress.network.name
-  private_subnet_netmask                 = var.connectivity_config.ingress.network.private_netmask
-  public_subnet_netmask                  = var.connectivity_config.ingress.network.public_netmask
+  ipam_pool_id                           = var.services.ingress.network.ipam_pool_id
+  name                                   = var.services.ingress.network.name
+  private_subnet_netmask                 = var.services.ingress.network.private_netmask
+  public_subnet_netmask                  = var.services.ingress.network.public_netmask
   tags                                   = var.tags
   transit_gateway_id                     = module.tgw.ec2_transit_gateway_id
-  vpc_cidr                               = var.connectivity_config.ingress.network.vpc_cidr
-  vpc_netmask                            = var.connectivity_config.ingress.network.vpc_netmask
+  vpc_cidr                               = var.services.ingress.network.vpc_cidr
+  vpc_netmask                            = var.services.ingress.network.vpc_netmask
 }
 
 ## Share the transit gateway with the other principals 

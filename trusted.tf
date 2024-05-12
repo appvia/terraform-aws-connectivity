@@ -8,6 +8,15 @@ resource "aws_ec2_transit_gateway_route_table" "trusted" {
   transit_gateway_id = module.tgw.ec2_transit_gateway_id
 }
 
+## Provision a core trusted routing table for the transit gateway, this can be used for cloud to on-premises 
+## connectivity, or for trusted network connectivity. 
+resource "aws_ec2_transit_gateway_route_table" "trusted_core" {
+  count = local.enable_trusted ? 1 : 0
+
+  tags               = merge(var.tags, { Name = var.connectivity_config.trusted.trusted_core_route_table_name })
+  transit_gateway_id = module.tgw.ec2_transit_gateway_id
+}
+
 ## Associate the trusted attachments with the trusted routing table. 
 resource "aws_ec2_transit_gateway_route_table_association" "trusted" {
   for_each = local.enable_trusted == true ? toset(var.connectivity_config.trusted.trusted_attachments) : toset([])
@@ -24,7 +33,7 @@ resource "aws_ec2_transit_gateway_route_table_propagation" "untrusted" {
   for_each = local.enable_trusted == true ? toset(var.connectivity_config.trusted.trusted_attachments) : toset([])
 
   transit_gateway_attachment_id  = each.value
-  transit_gateway_route_table_id = module.tgw.ec2_transit_gateway_association_default_route_table_id
+  transit_gateway_route_table_id = aws_ec2_transit_gateway_route_table.trusted[0].id
 }
 
 ## We need to add a default route to the trusted route table to egress 
@@ -42,7 +51,7 @@ resource "aws_ec2_transit_gateway_route" "trusted_default" {
 
   destination_cidr_block         = "0.0.0.0/0"
   transit_gateway_attachment_id  = module.egress_vpc[0].transit_gateway_attachment_id
-  transit_gateway_route_table_id = module.tgw.ec2_transit_gateway_association_default_route_table_id
+  transit_gateway_route_table_id = local.trusted_workloads_routing_table_id
 }
 
 ## We need to associate the endpoints vpc with the trusted routing table 
@@ -50,7 +59,7 @@ resource "aws_ec2_transit_gateway_route_table_association" "trusted_endpoints" {
   count = local.enable_trusted == true && local.enable_endpoints == true ? 1 : 0
 
   replace_existing_association   = true
-  transit_gateway_attachment_id  = module.endpoints_vpc[0].transit_gateway_attachment_id
+  transit_gateway_attachment_id  = local.endpoints_vpc_attachment_id
   transit_gateway_route_table_id = aws_ec2_transit_gateway_route_table.trusted[0].id
 }
 
@@ -76,8 +85,8 @@ resource "aws_ec2_transit_gateway_route_table_association" "trusted_egress" {
 resource "aws_ec2_transit_gateway_route_table_propagation" "trusted_endpoints" {
   count = local.enable_trusted == true && local.enable_endpoints == true ? 1 : 0
 
-  transit_gateway_attachment_id  = module.endpoints_vpc[0].transit_gateway_attachment_id
-  transit_gateway_route_table_id = module.tgw.ec2_transit_gateway_association_default_route_table_id
+  transit_gateway_attachment_id  = local.endpoints_vpc_attachment_id
+  transit_gateway_route_table_id = local.trusted_workloads_routing_table_id
 }
 
 ## We need to propagate the ingress_vpc into the untrusted route table 
@@ -85,7 +94,7 @@ resource "aws_ec2_transit_gateway_route_table_propagation" "trusted_ingress" {
   count = local.enable_trusted == true && local.enable_ingress == true ? 1 : 0
 
   transit_gateway_attachment_id  = module.ingress_vpc[0].transit_gateway_attachment_id
-  transit_gateway_route_table_id = module.tgw.ec2_transit_gateway_association_default_route_table_id
+  transit_gateway_route_table_id = local.trusted_workloads_routing_table_id
 }
 
 ## We need to propagate the egress_vpc into the untrusted route table 
@@ -93,5 +102,5 @@ resource "aws_ec2_transit_gateway_route_table_propagation" "trusted_egress" {
   count = local.enable_trusted == true && local.enable_egress == true ? 1 : 0
 
   transit_gateway_attachment_id  = module.egress_vpc[0].transit_gateway_attachment_id
-  transit_gateway_route_table_id = module.tgw.ec2_transit_gateway_association_default_route_table_id
+  transit_gateway_route_table_id = local.trusted_workloads_routing_table_id
 }

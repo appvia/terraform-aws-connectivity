@@ -4,6 +4,26 @@ output "connectivity_type" {
   value       = var.connectivity_config
 }
 
+output "trusted_route_table_id" {
+  description = "The ID of the trusted route table."
+  value       = local.enable_trusted ? aws_ec2_transit_gateway_route_table.trusted[0].id : null
+}
+
+output "trusted_core_route_table_id" {
+  description = "The ID of the trusted core route table."
+  value       = local.enable_trusted ? aws_ec2_transit_gateway_route_table.trusted_core[0].id : null
+}
+
+output "workloads_route_table_id" {
+  description = "The ID of the workloads route table."
+  value       = local.enable_trusted ? local.trusted_workloads_routing_table_id : null
+}
+
+output "inspection_route_inbound_table_id" {
+  description = "The ID of the inbound route table for inspection."
+  value       = local.enable_inspection_all ? aws_ec2_transit_gateway_route_table.inspection_return[0].id : null
+}
+
 output "egress_vpc_id" {
   description = "The ID of the VPC that is used for egress traffic."
   value       = local.enable_egress ? module.egress_vpc[0].vpc_id : null
@@ -61,22 +81,22 @@ output "endpoints_vpc_id_rt_attributes_by_type_by_az" {
 
 output "inspection_vpc_id" {
   description = "The ID of the VPC that is used for inspection traffic."
-  value       = local.enable_inspection ? module.inspection_vpc[0].vpc_id : null
+  value       = local.enable_inspection_all ? module.inspection_vpc[0].vpc_id : null
 }
 
 output "inspection_vpc_private_subnet_attributes_by_az" {
   description = "The attributes of the inspection VPC."
-  value       = local.enable_inspection ? module.inspection_vpc[0].private_subnet_attributes_by_az : null
+  value       = local.enable_inspection_all ? module.inspection_vpc[0].private_subnet_attributes_by_az : null
 }
 
 output "inspection_vpc_public_subnet_attributes_by_az" {
   description = "The attributes of the inspection VPC."
-  value       = local.enable_inspection ? module.inspection_vpc[0].public_subnet_attributes_by_az : null
+  value       = local.enable_inspection_all ? module.inspection_vpc[0].public_subnet_attributes_by_az : null
 }
 
 output "inspection_vpc_id_rt_attributes_by_type_by_az" {
   description = "The route table attributes of the inspection VPC."
-  value       = local.enable_inspection ? module.inspection_vpc[0].rt_attributes_by_type_by_az : null
+  value       = local.enable_inspection_all ? module.inspection_vpc[0].rt_attributes_by_type_by_az : null
 }
 
 output "transit_gateway_id" {

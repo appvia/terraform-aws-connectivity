@@ -16,14 +16,60 @@ module "hub" {
   enable_vpn_ecmp_support    = true
   tags                       = var.tags
 
+  services = {
+    egress = {
+      network = {
+        availability_zones = 2
+        name               = "egress"
+        private_netmask    = 24
+        public_netmask     = 24
+        vpc_cidr           = "10.20.0.0/21"
+      }
+    }
+
+    ingress = {
+      network = {
+        availability_zones = 2
+        name               = "ingress"
+        private_netmask    = 24
+        public_netmask     = 24
+        vpc_cidr           = "10.20.8.0/21"
+      }
+    }
+
+    endpoints = {
+      services = {
+        ec2messages = {
+          service = "ec2messages"
+        },
+        ssm = {
+          service = "ssm"
+        },
+        ssmmessages = {
+          service = "ssmmessages"
+        },
+      }
+
+      sharing = {
+        principals = []
+      }
+
+      network = {
+        availability_zones = 2
+        name               = "endpoints"
+        private_netmask    = 24
+        vpc_cidr           = "10.20.16.0/21"
+      }
+    }
+  }
+
   connectivity_config = {
-    inspection = {
+    inspection_with_all = {
       ## Will be created in the hub account i.e. provider aws 
       network = {
         availability_zones = 3
         name               = "inspection"
         private_netmask    = 24
-        public_netmask     = 24
         vpc_cidr           = "100.64.0.0/21"
       }
     }

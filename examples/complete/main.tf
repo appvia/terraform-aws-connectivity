@@ -17,7 +17,7 @@ module "hub" {
   ram_share_principals       = values(var.ram_principals)
   tags                       = var.tags
 
-  connectivity_config = {
+  services = {
     egress = {
       network = {
         availability_zones = 2
@@ -35,16 +35,6 @@ module "hub" {
         private_netmask    = 24
         public_netmask     = 24
         vpc_cidr           = "10.20.8.0/21"
-      }
-    }
-
-    inspection = {
-      network = {
-        availability_zones     = 3
-        vpc_cidr               = "100.64.0.0/21"
-        name                   = "inspection"
-        private_subnet_netmask = 24
-        public_subnet_netmask  = 24
       }
     }
 
@@ -72,5 +62,18 @@ module "hub" {
         vpc_cidr           = "10.20.16.0/21"
       }
     }
+  }
+
+  connectivity_config = {
+    inspection_with_all = {
+      network = {
+        availability_zones     = 3
+        vpc_cidr               = "100.64.0.0/21"
+        name                   = "inspection"
+        private_subnet_netmask = 24
+        public_subnet_netmask  = 24
+      }
+    }
+
   }
 }
