@@ -16,7 +16,7 @@ output "trusted_core_route_table_id" {
 
 output "workloads_route_table_id" {
   description = "The ID of the workloads route table."
-  value       = local.enable_trusted ? local.trusted_workloads_routing_table_id : null
+  value       = local.enable_trusted ? module.tgw.ec2_transit_gateway_association_default_route_table_id : null
 }
 
 output "inspection_route_inbound_table_id" {
