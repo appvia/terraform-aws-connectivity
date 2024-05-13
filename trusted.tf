@@ -26,6 +26,16 @@ resource "aws_ec2_transit_gateway_route_table_association" "trusted" {
   transit_gateway_route_table_id = aws_ec2_transit_gateway_route_table.trusted[0].id
 }
 
+## We need to propagate the routes for the trusted attachments into the trusted routing 
+## table. This will allow traffic to flow from the trusted routing table to the trusted 
+## routing table. 
+resource "aws_ec2_transit_gateway_route_table_propagation" "trusted" {
+  for_each = local.enable_trusted == true ? toset(var.connectivity_config.trusted.trusted_attachments) : toset([])
+
+  transit_gateway_attachment_id  = each.value
+  transit_gateway_route_table_id = aws_ec2_transit_gateway_route_table.trusted[0].id
+}
+
 ## We need to add propagate the routes of the trusted attached into the unstrusted 
 ## routing table. This will allow traffic to flow from the untrusted routing table 
 ## to the trusted routing table.
