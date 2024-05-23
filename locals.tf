@@ -10,6 +10,11 @@ locals {
   enable_ingress = var.services.ingress != null
   ## Indicates if we should provision a endpoints vpc 
   enable_endpoints = var.services.endpoints != null
+  ## Indicates if we should provision a central dns for private hosted zones 
+  enable_dns = var.services.dns != null
+
+  ## The tags to use 
+  tags = var.tags
 
   ## The current region 
   region = data.aws_region.current.name

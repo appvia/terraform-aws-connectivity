@@ -51,6 +51,44 @@ variable "services" {
         # The netmask to use for the VPC. Defaults to null, required when using IPAM
       })
     }), null)
+    dns = optional(object({
+      # The list of organizational units or accounts to share the domain rule with. 
+      resolver_name = optional(string, "dns-resolver")
+
+      # Defines the configuration for the endpoints network. 
+      network = object({
+        # Defines the configuration for the endpoints network. 
+        availability_zones = optional(number, 2)
+        # The number of availablity zones to use for the endpoints network. Defaults to 2. 
+        ipam_pool_id = optional(string, null)
+        # The ID of the IPAM pool to use for the endpoints network. Defaults to null. 
+        name = optional(string, "central-dns")
+        # The name of the endpoints network. Defaults to 'endpoints'. 
+        private_netmask = optional(number, 24)
+        # The netmask to use for the private network. Defaults to 24, ensure space for enough aws services. 
+        vpc_cidr = optional(string, null)
+        # The CIDR block to use for the VPC. Defaults to null, required when not using IPAM 
+        vpc_netmask = optional(string, null)
+        # The netmask to use for the VPC. Defaults to null, required when using IPAM 
+      }),
+
+      domain_rules = optional(list(object({
+        ram_share_name = optional(string, "central-dns")
+        # The name of the domain rule - this is mapped to the resource share name 
+        ram_principals = optional(map(string), {})
+        # The name of the resolver to use. Defaults to 'dns-resolver'.
+        rules = list(object({
+          name = string
+          # The name of the rule - the ram share name is domain.name + "-" + rule.name 
+          # The list of domain rules to apply to the domain. 
+          domain = string
+          # The domain to apply the rule to. 
+          targets = optional(list(string), [])
+          # The list of targets to apply the rule to - defaults to local resolver.
+        }))
+      })), [])
+    }), null)
+
     endpoints = optional(object({
       # Defines the configuration for the endpoints network. 
       network = object({
