@@ -103,3 +103,13 @@ output "transit_gateway_id" {
   description = "The ID of the transit gateway."
   value       = module.tgw.ec2_transit_gateway_id
 }
+
+output "region" {
+  description = "The AWS region in which the resources are created."
+  value       = local.region
+}
+
+output "account_id" {
+  description = "The AWS account ID."
+  value       = local.account_id
+}
