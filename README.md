@@ -274,7 +274,7 @@ The `terraform-docs` utility is used to generate this README. Follow the below s
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_dns"></a> [dns](#module\_dns) | appvia/dns/aws | 0.1.0 |
+| <a name="module_dns"></a> [dns](#module\_dns) | appvia/dns/aws | 1.2.0 |
 | <a name="module_dns_vpc"></a> [dns\_vpc](#module\_dns\_vpc) | appvia/network/aws | 0.3.0 |
 | <a name="module_egress_vpc"></a> [egress\_vpc](#module\_egress\_vpc) | appvia/network/aws | 0.3.0 |
 | <a name="module_endpoints"></a> [endpoints](#module\_endpoints) | appvia/private-endpoints/aws | 0.2.4 |
@@ -357,6 +357,7 @@ The `terraform-docs` utility is used to generate this README. Follow the below s
 | <a name="output_inspection_vpc_id_rt_attributes_by_type_by_az"></a> [inspection\_vpc\_id\_rt\_attributes\_by\_type\_by\_az](#output\_inspection\_vpc\_id\_rt\_attributes\_by\_type\_by\_az) | The route table attributes of the inspection VPC. |
 | <a name="output_inspection_vpc_private_subnet_attributes_by_az"></a> [inspection\_vpc\_private\_subnet\_attributes\_by\_az](#output\_inspection\_vpc\_private\_subnet\_attributes\_by\_az) | The attributes of the inspection VPC. |
 | <a name="output_inspection_vpc_public_subnet_attributes_by_az"></a> [inspection\_vpc\_public\_subnet\_attributes\_by\_az](#output\_inspection\_vpc\_public\_subnet\_attributes\_by\_az) | The attributes of the inspection VPC. |
+| <a name="output_region"></a> [region](#output\_region) | The AWS region in which the resources are created. |
 | <a name="output_transit_gateway_id"></a> [transit\_gateway\_id](#output\_transit\_gateway\_id) | The ID of the transit gateway. |
 | <a name="output_trusted_core_route_table_id"></a> [trusted\_core\_route\_table\_id](#output\_trusted\_core\_route\_table\_id) | The ID of the trusted core route table. |
 | <a name="output_trusted_route_table_id"></a> [trusted\_route\_table\_id](#output\_trusted\_route\_table\_id) | The ID of the trusted route table. |
