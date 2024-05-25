@@ -108,3 +108,8 @@ output "region" {
   description = "The AWS region in which the resources are created."
   value       = local.region
 }
+
+output "account_id" {
+  description = "The AWS account ID."
+  value       = local.account_id
+}
