@@ -1,4 +1,14 @@
-mock_provider "aws" {}
+mock_provider "aws" {
+  mock_data "aws_availability_zones" {
+    defaults = {
+      names = [
+        "eu-west-1a",
+        "eu-west-1b",
+        "eu-west-1c"
+      ]
+    }
+  }
+}
 
 run "basic" {
   command = plan
