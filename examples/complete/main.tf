@@ -62,6 +62,29 @@ module "hub" {
         vpc_cidr           = "10.20.16.0/21"
       }
     }
+
+    dns = {
+      resolver_name = "dns"
+
+      domain_rules = [
+        {
+          ram_principals = var.ram_principals
+          rules = [
+            {
+              name   = "local-dns"
+              domain = "aws.appvia.local"
+            }
+          ]
+        }
+      ]
+
+      network = {
+        availability_zones = 2
+        name               = "egress"
+        private_netmask    = 24
+        vpc_cidr           = "10.20.32.0/21"
+      }
+    }
   }
 
   connectivity_config = {
@@ -74,6 +97,5 @@ module "hub" {
         public_subnet_netmask  = 24
       }
     }
-
   }
 }
