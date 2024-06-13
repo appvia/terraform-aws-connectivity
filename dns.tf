@@ -30,11 +30,11 @@ module "dns" {
   tags                 = local.tags
 
   network = {
-    create     = false
-    name       = var.services.dns.network.name
-    subnet_ids = module.dns_vpc[0].private_subnet_ids
-    vpc_cidr   = var.services.dns.network.vpc_cidr
-    vpc_id     = module.dns_vpc[0].vpc_id
+    create             = false
+    name               = var.services.dns.network.name
+    private_subnet_ids = module.dns_vpc[0].private_subnet_ids
+    vpc_cidr           = var.services.dns.network.vpc_cidr
+    vpc_id             = module.dns_vpc[0].vpc_id
   }
 
   depends_on = [module.dns_vpc]
