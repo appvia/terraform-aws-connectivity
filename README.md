@@ -274,7 +274,7 @@ The `terraform-docs` utility is used to generate this README. Follow the below s
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_dns"></a> [dns](#module\_dns) | appvia/dns/aws | 1.2.0 |
+| <a name="module_dns"></a> [dns](#module\_dns) | appvia/dns/aws | 1.2.1 |
 | <a name="module_dns_vpc"></a> [dns\_vpc](#module\_dns\_vpc) | appvia/network/aws | 0.3.0 |
 | <a name="module_egress_vpc"></a> [egress\_vpc](#module\_egress\_vpc) | appvia/network/aws | 0.3.0 |
 | <a name="module_endpoints"></a> [endpoints](#module\_endpoints) | appvia/private-endpoints/aws | 0.2.4 |
