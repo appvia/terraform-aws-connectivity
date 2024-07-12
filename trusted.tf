@@ -64,6 +64,10 @@ resource "aws_ec2_transit_gateway_route" "trusted_default" {
   transit_gateway_route_table_id = module.tgw.ec2_transit_gateway_association_default_route_table_id
 }
 
+#
+## Associations  
+#
+
 ## We need to associate the endpoints vpc with the trusted routing table 
 resource "aws_ec2_transit_gateway_route_table_association" "trusted_endpoints" {
   count = local.enable_trusted == true && local.enable_endpoints == true ? 1 : 0
@@ -91,8 +95,48 @@ resource "aws_ec2_transit_gateway_route_table_association" "trusted_egress" {
   transit_gateway_route_table_id = aws_ec2_transit_gateway_route_table.trusted[0].id
 }
 
-## We need to propagate the endpoints_vpc into the untrusted route table 
+#
+## Propagations into the trusted routing table
+#
+
+## We need to propagate the ingress vpc into the trusted route table 
+resource "aws_ec2_transit_gateway_route_table_propagation" "trusted_ingress" {
+  count = local.enable_trusted == true && local.enable_ingress == true ? 1 : 0
+
+  transit_gateway_attachment_id  = module.ingress_vpc[0].transit_gateway_attachment_id
+  transit_gateway_route_table_id = aws_ec2_transit_gateway_route_table.trusted[0].id
+}
+
+## We need to propagate the egress vpc into the trusted route table  
+resource "aws_ec2_transit_gateway_route_table_propagation" "trusted_egress" {
+  count = local.enable_trusted == true && local.enable_egress == true ? 1 : 0
+
+  transit_gateway_attachment_id  = module.egress_vpc[0].transit_gateway_attachment_id
+  transit_gateway_route_table_id = aws_ec2_transit_gateway_route_table.trusted[0].id
+}
+
+## We need to propagate the endpoints vpc into the trusted route table
 resource "aws_ec2_transit_gateway_route_table_propagation" "trusted_endpoints" {
+  count = local.enable_trusted == true && local.enable_endpoints == true ? 1 : 0
+
+  transit_gateway_attachment_id  = local.endpoints_vpc_attachment_id
+  transit_gateway_route_table_id = aws_ec2_transit_gateway_route_table.trusted[0].id
+}
+
+## We need to propagate the dns vpc into the trusted route table
+resource "aws_ec2_transit_gateway_route_table_propagation" "trusted_dns" {
+  count = local.enable_trusted == true && local.enable_dns == true ? 1 : 0
+
+  transit_gateway_attachment_id  = module.dns_vpc[0].transit_gateway_attachment_id
+  transit_gateway_route_table_id = aws_ec2_transit_gateway_route_table.trusted[0].id
+}
+
+#
+## Propagations into the untrusted routing table
+#
+
+## We need to propagate the endpoints_vpc into the untrusted route table 
+resource "aws_ec2_transit_gateway_route_table_propagation" "untrusted_endpoints" {
   count = local.enable_trusted == true && local.enable_endpoints == true ? 1 : 0
 
   transit_gateway_attachment_id  = local.endpoints_vpc_attachment_id
@@ -100,7 +144,7 @@ resource "aws_ec2_transit_gateway_route_table_propagation" "trusted_endpoints" {
 }
 
 ## We need to propagate the ingress_vpc into the untrusted route table 
-resource "aws_ec2_transit_gateway_route_table_propagation" "trusted_ingress" {
+resource "aws_ec2_transit_gateway_route_table_propagation" "untrusted_ingress" {
   count = local.enable_trusted == true && local.enable_ingress == true ? 1 : 0
 
   transit_gateway_attachment_id  = module.ingress_vpc[0].transit_gateway_attachment_id
@@ -108,9 +152,17 @@ resource "aws_ec2_transit_gateway_route_table_propagation" "trusted_ingress" {
 }
 
 ## We need to propagate the egress_vpc into the untrusted route table 
-resource "aws_ec2_transit_gateway_route_table_propagation" "trusted_egress" {
+resource "aws_ec2_transit_gateway_route_table_propagation" "untrusted_egress" {
   count = local.enable_trusted == true && local.enable_egress == true ? 1 : 0
 
   transit_gateway_attachment_id  = module.egress_vpc[0].transit_gateway_attachment_id
+  transit_gateway_route_table_id = module.tgw.ec2_transit_gateway_association_default_route_table_id
+}
+
+## We need to propagate the dns_vpc into the untrusted route table 
+resource "aws_ec2_transit_gateway_route_table_propagation" "untrusted_dns" {
+  count = local.enable_trusted == true && local.enable_dns == true ? 1 : 0
+
+  transit_gateway_attachment_id  = module.dns_vpc[0].transit_gateway_attachment_id
   transit_gateway_route_table_id = module.tgw.ec2_transit_gateway_association_default_route_table_id
 }
