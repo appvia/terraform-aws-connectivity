@@ -7,6 +7,7 @@ module "dns_vpc" {
 
   availability_zones                     = var.services.dns.network.availability_zones
   enable_default_route_table_association = local.enable_default_route_table_association
+  enable_default_route_table_propagation = local.enable_default_route_table_propagation
   enable_ipam                            = var.services.dns.network.ipam_pool_id != null
   enable_transit_gateway                 = true
   ipam_pool_id                           = var.services.dns.network.ipam_pool_id
