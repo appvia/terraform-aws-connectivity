@@ -21,8 +21,9 @@ module "endpoints_vpc" {
 
 ## Provision if required the shared private endpoints
 module "endpoints" {
-  count  = local.enable_endpoints ? 1 : 0
-  source = "github.com/appvia/terraform-aws-private-endpoints?ref=develop"
+  count   = local.enable_endpoints ? 1 : 0
+  source  = "appvia/private-endpoints/aws"
+  version = "0.2.9"
 
   name      = var.services.endpoints.network.name
   endpoints = var.services.endpoints.services
