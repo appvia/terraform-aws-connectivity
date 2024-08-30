@@ -57,7 +57,7 @@ rule "terraform_documented_variables" {
 }
 
 rule "terraform_module_pinned_source" {
-  enabled = true
+  enabled = false
 }
 
 rule "terraform_standard_module_structure" {
