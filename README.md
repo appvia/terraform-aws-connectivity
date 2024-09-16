@@ -71,7 +71,7 @@ module "connectivity" {
 }
 ```
 
-Note we do not deploy the inspection firewall via this repository; purely the networking, layout, routing required to make it happen. This is intentional as we view the firewall configuration is likely to fall under a different teams remit.
+Note we do not deploy the inspection firewall via this repository; purely the networking, layout, routing required to make it happen. This is intentional as we view the firewall configuration is likely to fall under a different teams remit. This can be configured using the [terraform-aws-firewall](https://github.com/appvia/terraform-aws-firewall). 
 
 By adding the optional of egress, another VPC can be provisioned containing outbound nat gateways to route traffic to the internet.
 
