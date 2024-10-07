@@ -18,8 +18,8 @@ variable "asn" {
 
 variable "trusted_attachments" {
   description = "The list of trusted account IDs."
-  type        = list(string)
-  default     = []
+  type        = map(string)
+  default     = {}
 }
 
 variable "tags" {
