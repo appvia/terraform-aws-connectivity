@@ -179,7 +179,7 @@ variable "connectivity_config" {
 
     trusted = optional(object({
       # Defines the configuration for the trusted routing
-      trusted_attachments = optional(list(string), [])
+      trusted_attachments = optional(map(string), {})
       # The list of transit gateway attachments to trust e.g can see all the other untrusted networks. Defaults to an empty list.
       trusted_route_table_name = optional(string, "trusted")
       # The name of the trusted route table. Defaults to 'trusted'.
