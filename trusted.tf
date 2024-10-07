@@ -19,7 +19,7 @@ resource "aws_ec2_transit_gateway_route_table" "trusted_core" {
 
 ## Associate the trusted attachments with the trusted routing table. 
 resource "aws_ec2_transit_gateway_route_table_association" "trusted" {
-  for_each = local.enable_trusted == true ? toset(var.connectivity_config.trusted.trusted_attachments) : toset([])
+  for_each = local.enable_trusted == true ? var.connectivity_config.trusted.trusted_attachments : {}
 
   replace_existing_association   = true
   transit_gateway_attachment_id  = each.value
