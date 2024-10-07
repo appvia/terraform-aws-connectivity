@@ -40,7 +40,7 @@ resource "aws_ec2_transit_gateway_route_table_propagation" "trusted" {
 ## routing table. This will allow traffic to flow from the untrusted routing table 
 ## to the trusted routing table.
 resource "aws_ec2_transit_gateway_route_table_propagation" "untrusted" {
-  for_each = local.enable_trusted == true ? toset(var.connectivity_config.trusted.trusted_attachments) : toset([])
+  for_each = local.enable_trusted == true ? var.connectivity_config.trusted.trusted_attachments : {}
 
   transit_gateway_attachment_id  = each.value
   transit_gateway_route_table_id = module.tgw.ec2_transit_gateway_association_default_route_table_id
