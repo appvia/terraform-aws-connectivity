@@ -309,7 +309,6 @@ The `terraform-docs` utility is used to generate this README. Follow the below s
 | [aws_ec2_transit_gateway_route_table_propagation.inspection_egress](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ec2_transit_gateway_route_table_propagation) | resource |
 | [aws_ec2_transit_gateway_route_table_propagation.inspection_endpoints](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ec2_transit_gateway_route_table_propagation) | resource |
 | [aws_ec2_transit_gateway_route_table_propagation.inspection_ingress](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ec2_transit_gateway_route_table_propagation) | resource |
-| [aws_ec2_transit_gateway_route_table_propagation.trusted](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ec2_transit_gateway_route_table_propagation) | resource |
 | [aws_ec2_transit_gateway_route_table_propagation.trusted_dns](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ec2_transit_gateway_route_table_propagation) | resource |
 | [aws_ec2_transit_gateway_route_table_propagation.trusted_egress](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ec2_transit_gateway_route_table_propagation) | resource |
 | [aws_ec2_transit_gateway_route_table_propagation.trusted_endpoints](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ec2_transit_gateway_route_table_propagation) | resource |
