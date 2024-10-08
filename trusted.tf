@@ -109,7 +109,7 @@ resource "aws_ec2_transit_gateway_route_table_propagation" "trusted_ingress" {
 
 ## We need to propagate the egress vpc into the trusted route table  
 resource "aws_ec2_transit_gateway_route_table_propagation" "trusted_egress" {
-  count = local.enable_trusted == true && local.enable_egress == true ? 1 : 0
+  count = local.enable_trusted == true && local.enable_egress == true && local.enable_default_route_table_propagation == false ? 1 : 0
 
   transit_gateway_attachment_id  = module.egress_vpc[0].transit_gateway_attachment_id
   transit_gateway_route_table_id = aws_ec2_transit_gateway_route_table.trusted[0].id
@@ -117,7 +117,7 @@ resource "aws_ec2_transit_gateway_route_table_propagation" "trusted_egress" {
 
 ## We need to propagate the endpoints vpc into the trusted route table
 resource "aws_ec2_transit_gateway_route_table_propagation" "trusted_endpoints" {
-  count = local.enable_trusted == true && local.enable_endpoints == true ? 1 : 0
+  count = local.enable_trusted == true && local.enable_endpoints == true && local.enable_default_route_table_propagation == false ? 1 : 0
 
   transit_gateway_attachment_id  = local.endpoints_vpc_attachment_id
   transit_gateway_route_table_id = aws_ec2_transit_gateway_route_table.trusted[0].id
@@ -125,7 +125,7 @@ resource "aws_ec2_transit_gateway_route_table_propagation" "trusted_endpoints" {
 
 ## We need to propagate the dns vpc into the trusted route table
 resource "aws_ec2_transit_gateway_route_table_propagation" "trusted_dns" {
-  count = local.enable_trusted == true && local.enable_dns == true ? 1 : 0
+  count = local.enable_trusted == true && local.enable_dns == true && local.enable_default_route_table_propagation == false ? 1 : 0
 
   transit_gateway_attachment_id  = module.dns_vpc[0].transit_gateway_attachment_id
   transit_gateway_route_table_id = aws_ec2_transit_gateway_route_table.trusted[0].id
