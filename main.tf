@@ -43,6 +43,7 @@ module "egress_vpc" {
   public_subnet_netmask                  = var.services.egress.network.public_netmask
   tags                                   = var.tags
   transit_gateway_id                     = module.tgw.ec2_transit_gateway_id
+  transit_gateway_routes                 = var.services.egress.network.transit_gateway_routes
   vpc_cidr                               = var.services.egress.network.vpc_cidr
   vpc_netmask                            = var.services.egress.network.vpc_netmask
 }
