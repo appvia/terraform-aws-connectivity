@@ -23,7 +23,7 @@ module "dns_vpc" {
 module "dns" {
   count   = local.enable_dns ? 1 : 0
   source  = "appvia/dns/aws"
-  version = "1.2.1"
+  version = "1.2.2"
 
   resolver_name        = var.services.dns.resolver_name
   resolver_rule_groups = var.services.dns.domain_rules
