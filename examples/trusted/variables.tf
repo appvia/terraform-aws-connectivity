@@ -27,9 +27,3 @@ variable "tags" {
   type        = map(string)
   default     = {}
 }
-
-variable "ram_principals" {
-  description = "The AWS RAM principal to share the transit gateway with."
-  type        = map(string)
-  default     = {}
-}
