@@ -27,7 +27,7 @@ module "tgw" {
 module "egress_vpc" {
   count   = local.enable_egress ? 1 : 0
   source  = "appvia/network/aws"
-  version = "0.3.2"
+  version = "0.3.3"
 
   availability_zones                     = var.services.egress.network.availability_zones
   enable_default_route_table_association = local.enable_default_route_table_association
@@ -52,7 +52,7 @@ module "egress_vpc" {
 module "ingress_vpc" {
   count   = local.enable_ingress ? 1 : 0
   source  = "appvia/network/aws"
-  version = "0.3.2"
+  version = "0.3.3"
 
   availability_zones                     = var.services.ingress.network.availability_zones
   enable_default_route_table_association = local.enable_default_route_table_association
