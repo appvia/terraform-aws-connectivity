@@ -1,13 +1,12 @@
 <!-- markdownlint-disable -->
-<a href="https://www.appvia.io/"><img src="./appvia_banner.jpg" alt="Appvia Banner"/></a><br/><p align="right"> <a href="https://registry.terraform.io/modules/appvia/connectivity/aws/latest"><img src="https://img.shields.io/static/v1?label=APPVIA&message=Terraform%20Registry&color=191970&style=for-the-badge" alt="Terraform Registry"/></a></a> <a href="https://github.com/appvia/terraform-aws-connectivity/releases/latest"><img src="https://img.shields.io/github/release/appvia/terraform-aws-connectivity.svg?style=for-the-badge&color=006400" alt="Latest Release"/></a> <a href="https://appvia-community.slack.com/join/shared_invite/zt-1s7i7xy85-T155drryqU56emm09ojMVA#/shared-invite/email"><img src="https://img.shields.io/badge/Slack-Join%20Community-purple?style=for-the-badge&logo=slack" alt="Slack Community"/></a> <a href="https://github.com/appvia/terraform-aws-connectivity/graphs/contributors"><img src="https://img.shields.io/github/contributors/appvia/terraform-aws-connectivity.svg?style=for-the-badge&color=FF8C00" alt="Contributors"/></a>
+<a href="https://www.appvia.io/"><img src="https://github.com/appvia/terraform-aws-connectivity/blob/main/appvia_banner.jpg?raw=true" alt="Appvia Banner"/></a><br/><p align="right"> <a href="https://registry.terraform.io/modules/appvia/connectivity/aws/latest"><img src="https://img.shields.io/static/v1?label=APPVIA&message=Terraform%20Registry&color=191970&style=for-the-badge" alt="Terraform Registry"/></a></a> <a href="https://github.com/appvia/terraform-aws-connectivity/releases/latest"><img src="https://img.shields.io/github/release/appvia/terraform-aws-connectivity.svg?style=for-the-badge&color=006400" alt="Latest Release"/></a> <a href="https://appvia-community.slack.com/join/shared_invite/zt-1s7i7xy85-T155drryqU56emm09ojMVA#/shared-invite/email"><img src="https://img.shields.io/badge/Slack-Join%20Community-purple?style=for-the-badge&logo=slack" alt="Slack Community"/></a> <a href="https://github.com/appvia/terraform-aws-connectivity/graphs/contributors"><img src="https://img.shields.io/github/contributors/appvia/terraform-aws-connectivity.svg?style=for-the-badge&color=FF8C00" alt="Contributors"/></a>
 
 <!-- markdownlint-restore -->
 <!--
   ***** CAUTION: DO NOT EDIT ABOVE THIS LINE ******
 -->
 
-
-![Github Actions](../../actions/workflows/terraform.yml/badge.svg)
+![Github Actions](https://github.com/appvia/terraform-aws-connectivity/actions/workflows/terraform.yml/badge.svg)
 
 # Terraform AWS Connectivity Module
 
@@ -52,7 +51,7 @@ Currently the module supports the following layouts:
 
 <p align="center">
   </br>
-  <img src="https://github.com/appvia/terraform-aws-connectivity/blob/main/docs/inspection.drawio.svg" alt="Inspection Layout" width="600"/>
+  <img src="https://github.com/appvia/terraform-aws-connectivity/blob/main/docs/inspection.drawio.svg?raw=true" alt="Inspection Layout" width="600"/>
 </p>
 
 The inspection layout is intended to be used in collaboration with an [Inspection VPC](https://d1.awsstatic.com/architecture-diagrams/ArchitectureDiagrams/inspection-deployment-models-with-AWS-network-firewall-ra.pdf), filtering all traffic between the spokes, and depending if enabled, all traffic outbound to the internet or inbound via an ingress VPC.
@@ -126,7 +125,7 @@ Notes:
 
 <p align="center">
   </br>
-  <img src="https://github.com/appvia/terraform-aws-connectivity/blob/main/docs/trusted.drawio.svg" alt="Trusted Layout" width="600"/>
+  <img src="https://github.com/appvia/terraform-aws-connectivity/blob/main/docs/trusted.drawio.svg?raw=true" alt="Trusted Layout" width="600"/>
 </p>
 
 The trusted layout uses transit gateway routing tables to create two distinct routing domains:
@@ -147,7 +146,7 @@ Notes:
 
 <p align="center">
   </br>
-  <img src="https://github.com/appvia/terraform-aws-connectivity/blob/main/docs/egress-vpc.png" alt="Egress VPC">
+  <img src="https://github.com/appvia/terraform-aws-connectivity/blob/main/docs/egress-vpc.png?raw=true" alt="Egress VPC">
 </p>
 
 By adding a `var.connectivity_config.egress` object, the module will provision the necessary resources to route traffic to the internet via a shared egress VPC. Routing within the choose network layout (inspection, or trusted) is automatically provisioned accordingly.
@@ -175,7 +174,7 @@ module "connectivity" {
 
 <p align="center">
   </br>
-  <img src="https://github.com/appvia/terraform-aws-connectivity/blob/main/docs/ingress-vpc.png" alt="Ingress VPC">
+  <img src="https://github.com/appvia/terraform-aws-connectivity/blob/main/docs/ingress-vpc.png?raw=true" alt="Ingress VPC">
 </p>
 
 By adding a `var.connectivity_config.ingress` object, the module will provision the necessary resources to route traffic from the internet to the tenant VPCs. Routing within the choose network layout (inspection, or trusted) is automatically provisioned accordingly. Note, this module does not provisioned the load balancers and or WAF devices depicted in the diagram; purely the VPC and connectivity.
