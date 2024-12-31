@@ -1,4 +1,5 @@
 <!-- markdownlint-disable -->
+
 <a href="https://www.appvia.io/"><img src="https://github.com/appvia/terraform-aws-connectivity/blob/main/appvia_banner.jpg?raw=true" alt="Appvia Banner"/></a><br/><p align="right"> <a href="https://registry.terraform.io/modules/appvia/connectivity/aws/latest"><img src="https://img.shields.io/static/v1?label=APPVIA&message=Terraform%20Registry&color=191970&style=for-the-badge" alt="Terraform Registry"/></a></a> <a href="https://github.com/appvia/terraform-aws-connectivity/releases/latest"><img src="https://img.shields.io/github/release/appvia/terraform-aws-connectivity.svg?style=for-the-badge&color=006400" alt="Latest Release"/></a> <a href="https://appvia-community.slack.com/join/shared_invite/zt-1s7i7xy85-T155drryqU56emm09ojMVA#/shared-invite/email"><img src="https://img.shields.io/badge/Slack-Join%20Community-purple?style=for-the-badge&logo=slack" alt="Slack Community"/></a> <a href="https://github.com/appvia/terraform-aws-connectivity/graphs/contributors"><img src="https://img.shields.io/github/contributors/appvia/terraform-aws-connectivity.svg?style=for-the-badge&color=FF8C00" alt="Contributors"/></a>
 
 <!-- markdownlint-restore -->
@@ -79,7 +80,7 @@ module "connectivity" {
 }
 ```
 
-Note we do not deploy the inspection firewall via this repository; purely the networking, layout, routing required to make it happen. This is intentional as we view the firewall configuration is likely to fall under a different teams remit. This can be configured using the [terraform-aws-firewall](https://github.com/appvia/terraform-aws-firewall). 
+Note we do not deploy the inspection firewall via this repository; purely the networking, layout, routing required to make it happen. This is intentional as we view the firewall configuration is likely to fall under a different teams remit. This can be configured using the [terraform-aws-firewall](https://github.com/appvia/terraform-aws-firewall).
 
 By adding the optional of egress, another VPC can be provisioned containing outbound nat gateways to route traffic to the internet.
 
@@ -258,6 +259,67 @@ module "connectivity" {
 }
 ```
 
+## IAM Roles (Cloud Access)
+
+The following permissions are required by the module
+
+```hcl
+module "network_transit_gateway_admin" {
+  count   = var.repositories.connectivity != null ? 1 : 0
+  source  = "appvia/oidc/aws//modules/role"
+  version = "1.3.6"
+
+  name                    = var.repositories.connectivity.role_name
+  description             = "Deployment role used to deploy the Transit Gateway"
+  permission_boundary_arn = aws_iam_policy.default_permissions_boundary_network[0].arn
+  repository              = var.repositories.connectivity.url
+  tags                    = var.tags
+
+  read_only_policy_arns = [
+    "arn:aws:iam::aws:policy/AWSResourceAccessManagerReadOnlyAccess",
+    "arn:aws:iam::aws:policy/AmazonEC2ReadOnlyAccess",
+    "arn:aws:iam::aws:policy/ReadOnlyAccess",
+  ]
+  read_write_policy_arns = [
+    "arn:aws:iam::${local.network_account_id}:policy/${aws_iam_policy.ipam_admin[0].name}",
+    "arn:aws:iam::aws:policy/AWSResourceAccessManagerFullAccess",
+    "arn:aws:iam::aws:policy/ReadOnlyAccess",
+    "arn:aws:iam::aws:policy/job-function/NetworkAdministrator",
+    "arn:aws:iam::aws:policy/AmazonEC2FullAccess",
+  ]
+
+  read_write_inline_policies = {
+    "endpoints" = jsonencode({
+      Version = "2012-10-17"
+      Statement = [
+        {
+          Action = [
+            "route53resolver:Associate*",
+            "route53resolver:Create*",
+            "route53resolver:Delete*",
+            "route53resolver:Disassociate*",
+            "route53resolver:Get*",
+            "route53resolver:List*",
+            "route53resolver:Tag*",
+            "route53resolver:Update*",
+            "Route53resolver:UnTag*"
+          ]
+          Effect   = "Allow"
+          Resource = "*"
+        }
+      ]
+    })
+  }
+
+ # We can share our state with the firewall module
+ shared_repositories = var.repositories.firewall != null ? [var.repositories.firewall.url] : []
+
+ providers = {
+   aws = aws.network
+ }
+}
+```
+
 ## Update Documentation
 
 The `terraform-docs` utility is used to generate this README. Follow the below steps to update:
@@ -324,16 +386,3 @@ The `terraform-docs` utility is used to generate this README. Follow the below s
 ```
 
 ```
-
-```
-
-```
-
-```
-
-```
-
-```
-
-```
-
