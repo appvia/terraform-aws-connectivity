@@ -16,8 +16,4 @@ locals {
   account_id = data.aws_caller_identity.current.account_id
   ## The transit gateway attaccment id for the endpoints vpc
   endpoints_vpc_attachment_id = local.enable_endpoints ? module.endpoints_vpc[0].transit_gateway_attachment_id : null
-  ## Should we enable default propation on the vpc
-  enable_default_route_table_propagation = true
-  ## Should we enable default association on the vpc
-  enable_default_route_table_association = false
 }
