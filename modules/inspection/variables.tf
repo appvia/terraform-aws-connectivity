@@ -9,42 +9,22 @@ variable "amazon_side_asn" {
   }
 }
 
-variable "prefix_lists" {
-  description = "Provides the ability to provision prefix lists, and share them with other accounts."
-  type = list(object({
-    name = string
-    entry = list(object({
-      address_family = optional(string, "IPv4")
-      cidr           = string
-      description    = string
-      max_entries    = number
-    }))
-  }))
-  default = []
-}
-
-variable "prefix_ram_principals" {
-  description = "The list of organizational units or accounts to share the prefix lists with."
-  type        = list(string)
-  default     = []
-}
-
 variable "services" {
   description = "A collection of features and services associated with this connectivity domain."
   type = object({
     egress = optional(object({
       network = object({
-        # Defines the configuration for an egress network. 
+        # Defines the configuration for an egress network.
         availability_zones = optional(number, 2)
         # The number of availablity zones to use for the egress network. Defaults to 2.
         ipam_pool_id = optional(string, null)
-        # The ID of the IPAM pool to use for the egress network. Defaults to null. 
+        # The ID of the IPAM pool to use for the egress network. Defaults to null.
         name = optional(string, "egress")
-        # The name of the egress network. Defaults to 'egress'. 
+        # The name of the egress network. Defaults to 'egress'.
         private_netmask = optional(number, 28)
-        # The netmask to use for the private network. Defaults to 28. 
+        # The netmask to use for the private network. Defaults to 28.
         public_netmask = optional(number, 28)
-        # The netmask to use for the public network. Defaults to 28. 
+        # The netmask to use for the public network. Defaults to 28.
         transit_gateway_routes = optional(map(string), {
           private = "10.0.0.0/8"
           public  = "10.0.0.0/8"
@@ -57,37 +37,37 @@ variable "services" {
       })
     }), null)
     dns = optional(object({
-      # The list of organizational units or accounts to share the domain rule with. 
+      # The list of organizational units or accounts to share the domain rule with.
       resolver_name = optional(string, "dns-resolver")
 
-      # Defines the configuration for the endpoints network. 
+      # Defines the configuration for the endpoints network.
       network = object({
-        # Defines the configuration for the endpoints network. 
+        # Defines the configuration for the endpoints network.
         availability_zones = optional(number, 2)
-        # The number of availablity zones to use for the endpoints network. Defaults to 2. 
+        # The number of availablity zones to use for the endpoints network. Defaults to 2.
         ipam_pool_id = optional(string, null)
-        # The ID of the IPAM pool to use for the endpoints network. Defaults to null. 
+        # The ID of the IPAM pool to use for the endpoints network. Defaults to null.
         name = optional(string, "central-dns")
-        # The name of the endpoints network. Defaults to 'endpoints'. 
+        # The name of the endpoints network. Defaults to 'endpoints'.
         private_netmask = optional(number, 24)
-        # The netmask to use for the private network. Defaults to 24, ensure space for enough aws services. 
+        # The netmask to use for the private network. Defaults to 24, ensure space for enough aws services.
         vpc_cidr = optional(string, null)
-        # The CIDR block to use for the VPC. Defaults to null, required when not using IPAM 
+        # The CIDR block to use for the VPC. Defaults to null, required when not using IPAM
         vpc_netmask = optional(string, null)
-        # The netmask to use for the VPC. Defaults to null, required when using IPAM 
+        # The netmask to use for the VPC. Defaults to null, required when using IPAM
       }),
 
       domain_rules = optional(list(object({
         ram_share_name = optional(string, "central-dns")
-        # The name of the domain rule - this is mapped to the resource share name 
+        # The name of the domain rule - this is mapped to the resource share name
         ram_principals = optional(map(string), {})
         # The name of the resolver to use. Defaults to 'dns-resolver'.
         rules = list(object({
           name = string
-          # The name of the rule - the ram share name is domain.name + "-" + rule.name 
-          # The list of domain rules to apply to the domain. 
+          # The name of the rule - the ram share name is domain.name + "-" + rule.name
+          # The list of domain rules to apply to the domain.
           domain = string
-          # The domain to apply the rule to. 
+          # The domain to apply the rule to.
           targets = optional(list(string), [])
           # The list of targets to apply the rule to - defaults to local resolver.
         }))
@@ -95,31 +75,31 @@ variable "services" {
     }), null)
 
     endpoints = optional(object({
-      # Defines the configuration for the endpoints network. 
+      # Defines the configuration for the endpoints network.
       network = object({
-        # Defines the configuration for the endpoints network. 
+        # Defines the configuration for the endpoints network.
         availability_zones = optional(number, 2)
-        # The number of availablity zones to use for the endpoints network. Defaults to 2. 
+        # The number of availablity zones to use for the endpoints network. Defaults to 2.
         ipam_pool_id = optional(string, null)
-        # The ID of the IPAM pool to use for the endpoints network. Defaults to null. 
+        # The ID of the IPAM pool to use for the endpoints network. Defaults to null.
         name = optional(string, "endpoints")
-        # The name of the endpoints network. Defaults to 'endpoints'. 
+        # The name of the endpoints network. Defaults to 'endpoints'.
         private_netmask = optional(number, 24)
-        # The netmask to use for the private network. Defaults to 24, ensure space for enough aws services. 
+        # The netmask to use for the private network. Defaults to 24, ensure space for enough aws services.
         vpc_cidr = optional(string, null)
-        # The CIDR block to use for the VPC. Defaults to null, required when not using IPAM 
+        # The CIDR block to use for the VPC. Defaults to null, required when not using IPAM
         vpc_netmask = optional(string, null)
-        # The netmask to use for the VPC. Defaults to null, required when using IPAM 
+        # The netmask to use for the VPC. Defaults to null, required when using IPAM
       })
       sharing = optional(object({
-        # Defines the configuration for the sharing network via AWS RAM 
+        # Defines the configuration for the sharing network via AWS RAM
         principals = optional(list(string), [])
         # The list of organizational units or accounts to share the endpoints resolvers rules with. Defaults to an empty list.
       }), null)
       services = optional(map(object({
-        # Defines the configuration for the private endpoints in the shared network. 
+        # Defines the configuration for the private endpoints in the shared network.
         private_dns_enabled = optional(bool, true)
-        # Whether private DNS is enabled. Defaults to true. 
+        # Whether private DNS is enabled. Defaults to true.
         service_type = optional(string, "Interface")
         # The type of service, i.e. Gateway or Interface. Defaults to 'Interface'
         service = string
@@ -139,23 +119,23 @@ variable "services" {
       })
     }), null)
     ingress = optional(object({
-      # Defines the configuration for the ingress network. 
+      # Defines the configuration for the ingress network.
       network = object({
-        # Defines the configuration for the ingress network. 
+        # Defines the configuration for the ingress network.
         availability_zones = optional(number, 2)
-        # The number of availablity zones to use for the ingress network. Defaults to 2. 
+        # The number of availablity zones to use for the ingress network. Defaults to 2.
         ipam_pool_id = optional(string, null)
-        # The ID of the IPAM pool to use for the ingress network. Defaults to null. 
+        # The ID of the IPAM pool to use for the ingress network. Defaults to null.
         name = optional(string, "ingress")
-        # The name of the ingress network. Defaults to 'ingress'. 
+        # The name of the ingress network. Defaults to 'ingress'.
         private_netmask = number
-        # The netmask to use for the private network. Required, ensure space for enough aws services. 
+        # The netmask to use for the private network. Required, ensure space for enough aws services.
         public_netmask = number
-        # The netmask to use for the public network. Required, ensure space for enough aws services. 
+        # The netmask to use for the public network. Required, ensure space for enough aws services.
         vpc_cidr = optional(string, null)
-        # The CIDR block to use for the VPC. Defaults to null, required when not using IPAM 
+        # The CIDR block to use for the VPC. Defaults to null, required when not using IPAM
         vpc_netmask = optional(string, null)
-        # The netmask to use for the VPC. Defaults to null, required when using IPAM 
+        # The netmask to use for the VPC. Defaults to null, required when using IPAM
       })
     }), null)
   })
@@ -165,31 +145,37 @@ variable "services" {
 variable "connectivity_config" {
   description = "The type of connectivity options for the transit gateway."
   type = object({
-    inspection_with_all = optional(object({
-      # The name of the inbound route table. Defaults to 'inbound'. 
-      network = optional(object({
-        # Defines the configuration for the inspection network. 
-        availability_zones = number
-        # The number of availablity zones to use for the inspection network. Required. Must match the 
-        # number of availability zones you use in the organization, due to symmetric routing requirements. 
-        name = optional(string, "inspection")
-        # The name of the inspection network. Defaults to 'inspection'. 
-        private_netmask = optional(number, 24)
-        # The netmask to use for the private network. Defaults to 24
-        vpc_cidr = optional(string, "100.64.0.0/21")
-        # The CIDR block to use for the VPC. Defaults to carrier-grade NAT space. 
-      }), null)
-      return_route_table_name = optional(string, "inspection-return")
+    # The name of the inbound route table. Defaults to 'inbound'.
+    network = optional(object({
+      # Defines the configuration for the inspection network.
+      availability_zones = number
+      # The number of availablity zones to use for the inspection vpc
+      name = optional(string, "inspection")
+      # The name of the inspection network. Defaults to 'inspection'.
+      private_netmask = optional(number, 24)
+      # The netmask to use for the private network. Defaults to 24
+      public_netmask = optional(number, 0)
+      # The netmask to use for the public network, required if you want to host public services. Defaults to 0
+      vpc_cidr = string
+      # The CIDR block to use for the VPC. Defaults to carrier-grade NAT space.
     }), null)
-
-    trusted = optional(object({
-      # Defines the configuration for the trusted routing
-      trusted_attachments = optional(map(string), {})
-      # The list of transit gateway attachments to trust e.g can see all the other untrusted networks. Defaults to an empty list.
-      trusted_route_table_name = optional(string, "trusted")
-      # The name of the trusted route table. Defaults to 'trusted'.
-      trusted_core_route_table_name = optional(string, "trusted-core")
-    }), null)
+    ## Defines the configuration for the inspection network.
+    enable_default_route_table_association = optional(bool, false)
+    # Whether to enable default route table association. Defaults to false.
+    enable_default_route_table_propagation = optional(bool, true)
+    # Whether to enable default route table propagation. Defaults to false.
+    enable_egress = optional(bool, true)
+    # Whether to enable egress routing for the inspection network. Defaults to false.
+    segregated_blackhole_cidrs = optional(list(string), [])
+    # The list of CIDRs to blackhole in the segregated route table. Defaults to an empty list.
+    segregated_route_table_name = optional(string, "main-segregated")
+    ## Name of the inbound or segregated routing table for the inspection network
+    return_route_table_name = optional(string, "main-return")
+    ## Name of the route table for all returning traffic from the inspection network
+    shared_route_table_name = optional(string, "main-shared")
+    # Name of the shared route table - used by traffic bypassing the inspection network
+    core_route_table_name = optional(string, "main-core")
+    # Name of the core route table - used for future expansion
   })
 }
 

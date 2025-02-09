@@ -13,8 +13,20 @@ permissions:
   pull-requests: write
 
 jobs:
-  module-validation:
+  examples:
     uses: appvia/appvia-cicd-workflows/.github/workflows/terraform-module-validation.yml@main
-    name: Module Validation
+    name: Module Examples
     with:
-      working-directory: .
+      working-directory: examples/inspection
+
+  module-inspection:
+    uses: appvia/appvia-cicd-workflows/.github/workflows/terraform-module-validation.yml@main
+    name: Inspection Connectivity
+    with:
+      working-directory: modules/inspection
+
+  module-trusted:
+    uses: appvia/appvia-cicd-workflows/.github/workflows/terraform-module-validation.yml@main
+    name: Trusted Connectivity
+    with:
+      working-directory: modules/trusted

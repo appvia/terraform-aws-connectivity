@@ -5,7 +5,7 @@
 #####################################################################################
 
 module "hub_trusted" {
-  source = "../../"
+  source = "../../modules/trusted"
 
   name                       = var.name
   description                = "The transit gateway fot all accounts within this region"
@@ -61,9 +61,7 @@ module "hub_trusted" {
   }
 
   connectivity_config = {
-    trusted = {
-      trusted_attachments = var.trusted_attachments
-    }
+    trusted_attachments = var.trusted_attachments
   }
 }
 

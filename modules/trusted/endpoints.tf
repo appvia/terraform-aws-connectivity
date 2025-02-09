@@ -1,13 +1,13 @@
 
-## Provision an egress vpc if required 
+## Provision an egress vpc if required
 module "endpoints_vpc" {
   count   = local.enable_endpoints ? 1 : 0
   source  = "appvia/network/aws"
-  version = "0.3.4"
+  version = "0.3.3"
 
   availability_zones                     = var.services.endpoints.network.availability_zones
-  enable_default_route_table_association = local.enable_default_route_table_association
-  enable_default_route_table_propagation = local.enable_default_route_table_propagation
+  enable_default_route_table_association = false
+  enable_default_route_table_propagation = false
   enable_ipam                            = var.services.endpoints.network.ipam_pool_id != null
   enable_transit_gateway                 = true
   ipam_pool_id                           = var.services.endpoints.network.ipam_pool_id
@@ -23,7 +23,7 @@ module "endpoints_vpc" {
 module "endpoints" {
   count   = local.enable_endpoints ? 1 : 0
   source  = "appvia/private-endpoints/aws"
-  version = "0.2.11"
+  version = "0.2.10"
 
   name      = var.services.endpoints.network.name
   endpoints = var.services.endpoints.services
@@ -51,3 +51,29 @@ module "endpoints" {
 
   depends_on = [module.endpoints_vpc]
 }
+
+## We need to propagate the endpoints vpc into the trusted route table
+resource "aws_ec2_transit_gateway_route_table_propagation" "trusted_endpoints" {
+  count = local.enable_endpoints == true ? 1 : 0
+
+  transit_gateway_attachment_id  = local.endpoints_vpc_attachment_id
+  transit_gateway_route_table_id = aws_ec2_transit_gateway_route_table.trusted.id
+}
+
+## We need to propagate the dns_vpc into the untrusted route table
+resource "aws_ec2_transit_gateway_route_table_propagation" "untrusted_dns" {
+  count = local.enable_dns == true ? 1 : 0
+
+  transit_gateway_attachment_id  = module.dns_vpc[0].transit_gateway_attachment_id
+  transit_gateway_route_table_id = module.tgw.ec2_transit_gateway_association_default_route_table_id
+}
+
+## We need to associate the endpoints vpc with the trusted routing table
+resource "aws_ec2_transit_gateway_route_table_association" "trusted_endpoints" {
+  count = local.enable_endpoints == true ? 1 : 0
+
+  replace_existing_association   = true
+  transit_gateway_attachment_id  = local.endpoints_vpc_attachment_id
+  transit_gateway_route_table_id = aws_ec2_transit_gateway_route_table.trusted.id
+}
+
