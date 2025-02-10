@@ -20,7 +20,9 @@ variable "tags" {
   description = "A map of tags to assign to the resources."
   type        = map(string)
   default = {
-    Environment = "test"
+    Environment = "Production"
     GitRepo     = "https://github.com/appvia/terraform-aws-connectivity"
+    Owner       = "Engineering"
+    Product     = "Networking"
   }
 }

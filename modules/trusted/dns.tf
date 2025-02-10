@@ -1,13 +1,13 @@
 
-## Provision an egress vpc if required 
+## Provision an egress vpc if required
 module "dns_vpc" {
   count   = local.enable_dns ? 1 : 0
   source  = "appvia/network/aws"
-  version = "0.3.4"
+  version = "0.3.3"
 
   availability_zones                     = var.services.dns.network.availability_zones
-  enable_default_route_table_association = local.enable_default_route_table_association
-  enable_default_route_table_propagation = local.enable_default_route_table_propagation
+  enable_default_route_table_association = false
+  enable_default_route_table_propagation = false
   enable_ipam                            = var.services.dns.network.ipam_pool_id != null
   enable_transit_gateway                 = true
   ipam_pool_id                           = var.services.dns.network.ipam_pool_id
@@ -23,7 +23,7 @@ module "dns_vpc" {
 module "dns" {
   count   = local.enable_dns ? 1 : 0
   source  = "appvia/dns/aws"
-  version = "1.2.4"
+  version = "1.2.3"
 
   resolver_name        = var.services.dns.resolver_name
   resolver_rule_groups = var.services.dns.domain_rules
@@ -39,3 +39,20 @@ module "dns" {
 
   depends_on = [module.dns_vpc]
 }
+
+## We need to propagate the dns vpc into the trusted route table
+resource "aws_ec2_transit_gateway_route_table_propagation" "trusted_dns" {
+  count = local.enable_dns == true ? 1 : 0
+
+  transit_gateway_attachment_id  = module.dns_vpc[0].transit_gateway_attachment_id
+  transit_gateway_route_table_id = aws_ec2_transit_gateway_route_table.trusted.id
+}
+
+## We need to propagate the endpoints_vpc into the untrusted route table
+resource "aws_ec2_transit_gateway_route_table_propagation" "untrusted_endpoints" {
+  count = local.enable_endpoints == true ? 1 : 0
+
+  transit_gateway_attachment_id  = local.endpoints_vpc_attachment_id
+  transit_gateway_route_table_id = module.tgw.ec2_transit_gateway_association_default_route_table_id
+}
+

@@ -5,7 +5,7 @@
 #####################################################################################
 
 module "hub" {
-  source = "../../"
+  source = "../../modules/inspection"
 
   name                       = var.name
   description                = "The transit gateway fot all accounts within this region"
@@ -64,14 +64,15 @@ module "hub" {
   }
 
   connectivity_config = {
-    inspection_with_all = {
-      ## Will be created in the hub account i.e. provider aws 
-      network = {
-        availability_zones = 3
-        name               = "inspection"
-        private_netmask    = 24
-        vpc_cidr           = "100.64.0.0/21"
-      }
+    ## Will be created in the hub account i.e. provider aws
+    network = {
+      availability_zones = 3
+      name               = "inspection"
+      private_netmask    = 24
+      vpc_cidr           = "100.64.0.0/21"
     }
+    enable_default_route_table_association = true
+    enable_default_route_table_propagation = true
+    segregated_blackhole_cidrs             = ["10.90.0.0/16"]
   }
 }
