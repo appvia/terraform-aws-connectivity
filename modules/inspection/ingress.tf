@@ -3,14 +3,11 @@
 module "ingress_vpc" {
   count   = local.enable_ingress ? 1 : 0
   source  = "appvia/network/aws"
-  version = "0.3.5"
+  version = "0.4.0"
 
   availability_zones                     = var.services.ingress.network.availability_zones
   enable_default_route_table_association = false
   enable_default_route_table_propagation = false
-  enable_ipam                            = var.services.ingress.network.ipam_pool_id != null
-  enable_nat_gateway                     = false
-  enable_transit_gateway                 = true
   ipam_pool_id                           = var.services.ingress.network.ipam_pool_id
   name                                   = var.services.ingress.network.name
   private_subnet_netmask                 = var.services.ingress.network.private_netmask
