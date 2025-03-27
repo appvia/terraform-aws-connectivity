@@ -3,13 +3,11 @@
 module "dns_vpc" {
   count   = local.enable_dns ? 1 : 0
   source  = "appvia/network/aws"
-  version = "0.3.6"
+  version = "0.4.0"
 
   availability_zones                     = var.services.dns.network.availability_zones
   enable_default_route_table_association = false
   enable_default_route_table_propagation = false
-  enable_ipam                            = var.services.dns.network.ipam_pool_id != null
-  enable_transit_gateway                 = true
   ipam_pool_id                           = var.services.dns.network.ipam_pool_id
   name                                   = var.services.dns.network.name
   private_subnet_netmask                 = var.services.dns.network.private_netmask

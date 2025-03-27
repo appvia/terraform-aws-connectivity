@@ -3,14 +3,11 @@
 module "egress_vpc" {
   count   = local.enable_egress ? 1 : 0
   source  = "appvia/network/aws"
-  version = "0.3.6"
+  version = "0.4.0"
 
   availability_zones                     = var.services.egress.network.availability_zones
   enable_default_route_table_association = false
   enable_default_route_table_propagation = false
-  enable_ipam                            = var.services.egress.network.ipam_pool_id != null
-  enable_nat_gateway                     = true
-  enable_transit_gateway                 = true
   enable_transit_gateway_subnet_natgw    = true
   ipam_pool_id                           = var.services.egress.network.ipam_pool_id
   name                                   = var.services.egress.network.name

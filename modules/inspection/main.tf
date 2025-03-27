@@ -2,12 +2,11 @@
 ## Provision the inspection vpcs if required
 module "inspection_vpc" {
   source  = "appvia/network/aws"
-  version = "0.3.6"
+  version = "0.4.0"
 
   availability_zones                     = var.connectivity_config.network.availability_zones
   enable_default_route_table_association = false
   enable_default_route_table_propagation = false
-  enable_transit_gateway                 = true
   enable_transit_gateway_appliance_mode  = true
   name                                   = var.connectivity_config.network.name
   private_subnet_netmask                 = var.connectivity_config.network.private_netmask
