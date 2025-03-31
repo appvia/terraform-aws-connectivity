@@ -2,7 +2,7 @@
 ## Provision the inspection vpcs if required
 module "inspection_vpc" {
   source  = "appvia/network/aws"
-  version = "0.4.0"
+  version = "0.6.0"
 
   availability_zones                     = var.connectivity_config.network.availability_zones
   enable_default_route_table_association = false
