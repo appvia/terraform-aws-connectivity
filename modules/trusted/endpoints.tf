@@ -21,31 +21,29 @@ module "endpoints_vpc" {
 module "endpoints" {
   count   = local.enable_endpoints ? 1 : 0
   source  = "appvia/private-endpoints/aws"
-  version = "0.2.12"
+  version = "0.3.0"
 
-  name      = var.services.endpoints.network.name
   endpoints = var.services.endpoints.services
+  name      = var.services.endpoints.network.name
   region    = local.region
   tags      = var.tags
 
   network = {
-    create                    = false
     name                      = var.services.endpoints.network.name
     private_subnet_cidr_by_id = module.endpoints_vpc[0].private_subnet_cidr_by_id
     vpc_dns_resolver          = cidrhost(module.endpoints_vpc[0].vpc_cidr, 2)
     vpc_id                    = module.endpoints_vpc[0].vpc_id
   }
 
-  resolvers = {
-    outbound = {
-      create            = true
-      ip_address_offset = 10
-    }
+  resolver_rules = {
+    principals = try(var.services.endpoints.resolver_rules.principals, [])
   }
 
-  sharing = {
-    principals = var.services.endpoints.sharing.principals
-  }
+  resolvers = try(var.services.endpoints.resolver.enable, false) ? {
+    outbound = {
+      ip_address_offset = 10
+    }
+  } : null
 
   depends_on = [module.endpoints_vpc]
 }

@@ -75,6 +75,7 @@ variable "services" {
         }))
       })), [])
     }), null)
+    ## Centralized DNS, used to house central DNS resolvers and rules
 
     endpoints = optional(object({
       # Defines the configuration for the endpoints network.
@@ -93,14 +94,19 @@ variable "services" {
         vpc_netmask = optional(string, null)
         # The netmask to use for the VPC. Defaults to null, required when using IPAM
       })
-      sharing = optional(object({
+
+      resolver_rules = optional(object({
         # Defines the configuration for the sharing network via AWS RAM
         principals = optional(list(string), [])
         # The list of organizational units or accounts to share the endpoints resolvers rules with. Defaults to an empty list.
       }), null)
+
+      resolver = optional(object({
+        enable = optional(bool, false)
+        # Whether to enable the resolver. Defaults to false.
+      }), null)
+
       services = optional(map(object({
-        # Defines the configuration for the private endpoints in the shared network.
-        private_dns_enabled = optional(bool, true)
         # Whether private DNS is enabled. Defaults to true.
         service_type = optional(string, "Interface")
         # The type of service, i.e. Gateway or Interface. Defaults to 'Interface'
@@ -120,6 +126,7 @@ variable "services" {
         },
       })
     }), null)
+    ## Centralized private endpoints, using route53 resolver rules instead of private hosted zones
 
     ingress = optional(object({
       # Defines the configuration for the ingress network.
@@ -141,6 +148,7 @@ variable "services" {
         # The netmask to use for the VPC. Defaults to null, required when using IPAM
       })
     }), null)
+    ## Centralized ingress network, used to house all the ingress endpoints
   })
   default = {}
 }

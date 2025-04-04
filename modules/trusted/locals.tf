@@ -6,14 +6,16 @@ locals {
   enable_ingress = var.services.ingress != null
   ## Indicates if we should provision a endpoints vpc
   enable_endpoints = var.services.endpoints != null
+  ## Indicates if we should provision a central endpoints vpc using private hosted zones
+  enable_phz_endpoints = var.services.endpoints_phz != null
   ## Indicates if we should provision a central dns for private hosted zones
   enable_dns = var.services.dns != null
+  ## The transit gateway attaccment id for the endpoints vpc
+  endpoints_vpc_attachment_id = local.enable_endpoints ? module.endpoints_vpc[0].transit_gateway_attachment_id : null
   ## The tags to use
   tags = var.tags
   ## The current region
   region = data.aws_region.current.name
   ## The current account id
   account_id = data.aws_caller_identity.current.account_id
-  ## The transit gateway attaccment id for the endpoints vpc
-  endpoints_vpc_attachment_id = local.enable_endpoints ? module.endpoints_vpc[0].transit_gateway_attachment_id : null
 }
