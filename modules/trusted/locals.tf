@@ -6,8 +6,6 @@ locals {
   enable_ingress = var.services.ingress != null
   ## Indicates if we should provision a endpoints vpc
   enable_endpoints = var.services.endpoints != null
-  ## Indicates if we should provision a central endpoints vpc using private hosted zones
-  enable_phz_endpoints = var.services.endpoints_phz != null
   ## Indicates if we should provision a central dns for private hosted zones
   enable_dns = var.services.dns != null
   ## The transit gateway attaccment id for the endpoints vpc
