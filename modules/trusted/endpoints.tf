@@ -3,11 +3,14 @@
 module "endpoints_vpc" {
   count   = local.enable_endpoints ? 1 : 0
   source  = "appvia/network/aws"
-  version = "0.4.0"
+  version = "0.6.6"
 
   availability_zones                     = var.services.endpoints.network.availability_zones
   enable_default_route_table_association = false
   enable_default_route_table_propagation = false
+  enable_dynamodb_endpoint               = false
+  enable_route53_resolver_rules          = false
+  enable_s3_endpoint                     = false
   ipam_pool_id                           = var.services.endpoints.network.ipam_pool_id
   name                                   = var.services.endpoints.network.name
   private_subnet_netmask                 = var.services.endpoints.network.private_netmask
