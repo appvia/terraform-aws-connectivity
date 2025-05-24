@@ -11,7 +11,9 @@ module "ingress_vpc" {
   ipam_pool_id                           = var.services.ingress.network.ipam_pool_id
   name                                   = var.services.ingress.network.name
   private_subnet_netmask                 = var.services.ingress.network.private_netmask
+  private_subnet_tags                    = { "Type" = "Private" }
   public_subnet_netmask                  = var.services.ingress.network.public_netmask
+  public_subnet_tags                     = { "Type" = "Public" }
   tags                                   = var.tags
   transit_gateway_id                     = module.tgw.ec2_transit_gateway_id
   vpc_cidr                               = var.services.ingress.network.vpc_cidr
