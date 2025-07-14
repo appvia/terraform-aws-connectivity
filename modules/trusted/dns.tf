@@ -3,7 +3,7 @@
 module "dns_vpc" {
   count   = local.enable_dns ? 1 : 0
   source  = "appvia/network/aws"
-  version = "0.6.9"
+  version = "0.6.10"
 
   availability_zones                     = var.services.dns.network.availability_zones
   enable_default_route_table_association = false
