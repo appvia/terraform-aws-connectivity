@@ -3,7 +3,7 @@
 module "endpoints_vpc" {
   count   = local.enable_endpoints ? 1 : 0
   source  = "appvia/network/aws"
-  version = "0.6.9"
+  version = "0.6.10"
 
   availability_zones                     = var.services.endpoints.network.availability_zones
   enable_default_route_table_association = false
@@ -24,7 +24,7 @@ module "endpoints_vpc" {
 module "endpoints" {
   count   = local.enable_endpoints ? 1 : 0
   source  = "appvia/private-endpoints/aws"
-  version = "0.3.1"
+  version = "0.3.2"
 
   endpoints = var.services.endpoints.services
   name      = var.services.endpoints.network.name
