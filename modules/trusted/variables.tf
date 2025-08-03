@@ -142,6 +142,11 @@ variable "services" {
         # The netmask to use for the private network. Required, ensure space for enough aws services.
         public_netmask = number
         # The netmask to use for the public network. Required, ensure space for enough aws services.
+        transit_gateway_routes = optional(map(string), {
+          private = "10.0.0.0/8"
+          public  = "10.0.0.0/8"
+        })
+        # The transit gateway route tables entries for the ingress network.
         vpc_cidr = optional(string, null)
         # The CIDR block to use for the VPC. Defaults to null, required when not using IPAM
         vpc_netmask = optional(string, null)

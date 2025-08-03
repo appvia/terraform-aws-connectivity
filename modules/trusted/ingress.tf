@@ -16,6 +16,7 @@ module "ingress_vpc" {
   public_subnet_tags                     = { "Type" = "Public" }
   tags                                   = var.tags
   transit_gateway_id                     = module.tgw.ec2_transit_gateway_id
+  transit_gateway_routes                 = var.services.ingress.network.transit_gateway_routes
   vpc_cidr                               = var.services.ingress.network.vpc_cidr
   vpc_netmask                            = var.services.ingress.network.vpc_netmask
 }
