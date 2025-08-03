@@ -43,7 +43,7 @@ module "endpoints" {
     }
   }
 
-  sharing = {
+  resolver_rules = {
     principals = var.services.endpoints.sharing.principals
   }
 
