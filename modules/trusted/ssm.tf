@@ -3,10 +3,20 @@
 resource "aws_ssm_parameter" "transit_gateway_id" {
   count = var.enable_ssm_sharing ? 1 : 0
 
-  name        = format(var.transit_ssm_parameter_name, var.region)
-  description = "Contains the Transit Gateway ID for region ${var.region}"
+  name        = format("%s/%s/id", var.transit_ssm_parameter_prefix, local.region)
+  description = "Contains the Transit Gateway ID for region ${local.region}"
   type        = "String"
-  value       = var.transit_gateway_id
+  value       = module.tgw.ec2_transit_gateway_id
+  tags        = var.tags
+}
+
+resource "aws_ssm_parameter" "transit_gateway_arn" {
+  count = var.enable_ssm_sharing ? 1 : 0
+
+  name        = format("%s/%s/arn", var.transit_ssm_parameter_prefix, local.region)
+  description = "Contains the Transit Gateway ARN for region ${local.region}"
+  type        = "String"
+  value       = module.tgw.ec2_transit_gateway_arn
   tags        = var.tags
 }
 
@@ -17,9 +27,13 @@ module "transit_gateway_ssm_share" {
   version = "0.0.1"
 
   allow_external_principals = false
-  name                      = "transit-gateway-ssm-${var.region}"
+  name                      = format("transit-gateway-ssm-%s", local.region)
   principals                = var.ram_share_principals
-  resource_arns             = [aws_ssm_parameter.transit_gateway_id.arn]
   tags                      = var.tags
+
+  resource_arns = [
+    aws_ssm_parameter.transit_gateway_arn.arn,
+    aws_ssm_parameter.transit_gateway_id.arn,
+  ]
 }
 
