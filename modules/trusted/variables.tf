@@ -200,6 +200,18 @@ variable "enable_vpn_ecmp_support" {
   default     = false
 }
 
+variable "transit_ssm_parameter_name" {
+  description = "The name of the SSM parameter to create for the transit gateway ID."
+  type        = string
+  default     = "/landing-zone/%s/transit-gateway/id"
+}
+
+variable "enable_ssm_sharing" {
+  description = "Whether to create and share the SSM parameter for the transit gateway ID."
+  type        = bool
+  default     = false
+}
+
 variable "name" {
   description = "The name of the transit gateway to provision."
   type        = string
