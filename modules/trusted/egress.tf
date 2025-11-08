@@ -3,7 +3,7 @@
 module "egress_vpc" {
   count   = local.enable_egress ? 1 : 0
   source  = "appvia/network/aws"
-  version = "0.6.10"
+  version = "0.6.13"
 
   availability_zones                     = var.services.egress.network.availability_zones
   enable_default_route_table_association = false
