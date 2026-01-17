@@ -9,7 +9,7 @@
 ## Provision the transit gateway for this region
 module "tgw" {
   source  = "terraform-aws-modules/transit-gateway/aws"
-  version = "3.0.2"
+  version = "3.1.0"
 
   name                                   = var.name
   amazon_side_asn                        = var.amazon_side_asn
