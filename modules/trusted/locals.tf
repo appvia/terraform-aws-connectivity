@@ -8,12 +8,12 @@ locals {
   enable_endpoints = var.services.endpoints != null
   ## Indicates if we should provision a central dns for private hosted zones
   enable_dns = var.services.dns != null
-  ## The transit gateway attaccment id for the endpoints vpc
+  ## The transit gateway attachment id for the endpoints vpc
   endpoints_vpc_attachment_id = local.enable_endpoints ? module.endpoints_vpc[0].transit_gateway_attachment_id : null
   ## The tags to use
   tags = var.tags
   ## The current region
-  region = data.aws_region.current.name
+  region = data.aws_region.current.region
   ## The current account id
   account_id = data.aws_caller_identity.current.account_id
 }

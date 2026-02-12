@@ -13,32 +13,143 @@
 
 ## Description
 
-The purpose of this module is to provision the necessary resources to establish connectivity between a transit gateway and other VPCs, accounts, and on-premises networks, as well as provision a baseline for network topology and security. Currently this module can setup the requirement for
+### Problem and Solution
 
-- Inspection VPC: provision the necessary resources and routing to inspect traffic between the transit gateway and spoke VPCs.
-- Trusted Layout: here the routing is broken into two routing domains, trusted and untrusted. All traffic within the environment have the ability to route to the trusted domain attachments and back, but traffic between those networks located in the untrusted domain is forbidden.
-- Egress VPC: using either one of the above, this module can setup the requirements for an egress VPC to route traffic to the internet.
-- Ingress VPC: using either one of the above, this module can setup the requirements for an ingress VPC to route traffic from the internet, to the tenant VPCs.
+Building secure, scalable network connectivity across multiple AWS accounts and VPCs is complex. Transit gateways require careful orchestration of route tables, associations, propagations, and optional inspection or segmentation. This module standardizes that connectivity by provisioning the necessary resources to establish Transit Gateway–based hub-and-spoke topologies with optional traffic inspection, trusted/untrusted segmentation, and shared egress/ingress/endpoints VPCs.
 
-## Usage
+### Architecture Overview
+
+The module provides two layout types—**Inspection** and **Trusted**—each deployed via its own submodule (`modules/inspection` or `modules/trusted`). Both create a Transit Gateway with configurable route tables. The Inspection layout centralizes traffic through an inspection VPC for filtering; the Trusted layout uses routing domains to isolate trusted workloads from untrusted ones. Optional services (egress, ingress, endpoints, DNS) can be added via the `services` object and are integrated into the chosen layout’s routing automatically.
+
+### Cloud Context
+
+Designed for multi-account AWS environments (e.g., landing zones, organizational units). Supports RAM sharing for cross-account transit gateway access and integrates with [terraform-aws-firewall](https://github.com/appvia/terraform-aws-firewall) for inspection deployment.
+
+### Feature Set
+
+- **Security by Default**: Route tables isolate traffic; inspection layout enforces traffic via inspection VPC; trusted layout enforces segmentation between untrusted spokes.
+- **Flexibility**: Supports both Inspection and Trusted layouts; optional egress, ingress, endpoints, and central DNS via `services` object; IPAM or manual CIDR assignment.
+- **Operational Excellence**: Transit Gateway route table naming and structure aligned with common patterns; integration with Appvia networking modules.
+- **Compliance**: Suitable for architectures requiring traffic inspection, east-west segmentation, and centralized egress/ingress.
+
+## Usage Gallery
+
+### Golden Path (Simple)
+
+Minimal inspection layout with inspection VPC only:
 
 ```hcl
-module "example" {
-  source  = "appvia/<NAME>/aws"
-  version = "0.0.1"
+module "connectivity" {
+  source  = "appvia/connectivity/aws//modules/inspection"
+  version = "0.1.7"
 
-  name                       = var.name
-  description                = "The transit gateway fot all accounts within this region"
-  amazon_side_asn            = var.asn
+  name                       = "hub-tgw"
+  description                = "Transit gateway for all accounts in this region"
+  amazon_side_asn            = 64512
   enable_dns_support         = true
   enable_external_principals = true
-  enable_multicast_support   = true
-  enable_vpn_ecmp_support    = true
-  tags                       = var.tags
+  enable_multicast_support   = false
+  enable_vpn_ecmp_support    = false
+  tags                       = { Environment = "prod" }
 
   connectivity_config = {
-    inspection = {
-      inspection_tgw_attachment_id = "tgw-attach-111111"
+    network = {
+      availability_zones = 2
+      vpc_cidr           = "100.64.0.0/21"
+      name               = "inspection"
+      private_netmask    = 24
+      public_netmask     = 0
+    }
+  }
+}
+```
+
+### Power User (Advanced)
+
+Inspection layout with egress, ingress, and endpoints services:
+
+```hcl
+module "connectivity" {
+  source  = "appvia/connectivity/aws//modules/inspection"
+  version = "0.1.7"
+
+  name                       = "hub-tgw"
+  description                = "Transit gateway for all accounts in this region"
+  amazon_side_asn            = 64512
+  enable_dns_support         = true
+  enable_external_principals = true
+  enable_multicast_support   = false
+  enable_vpn_ecmp_support    = false
+  tags                       = { Environment = "prod" }
+
+  services = {
+    egress = {
+      network = {
+        availability_zones = 2
+        name               = "egress"
+        vpc_cidr           = "10.20.0.0/21"
+        private_netmask    = 24
+        public_netmask     = 24
+      }
+    }
+    ingress = {
+      network = {
+        availability_zones = 2
+        name               = "ingress"
+        vpc_cidr           = "10.20.8.0/21"
+        private_netmask    = 24
+        public_netmask     = 24
+      }
+    }
+    endpoints = {
+      network = {
+        availability_zones = 2
+        name               = "endpoints"
+        vpc_cidr           = "10.20.16.0/21"
+        private_netmask    = 24
+      }
+      sharing = {
+        principals = ["arn:aws:organizations::123456789012:ou/ou-xxxx"]
+      }
+      services = {
+        ec2messages = { service = "ec2messages" }
+        ssm         = { service = "ssm" }
+        ssmmessages = { service = "ssmmessages" }
+      }
+    }
+  }
+
+  connectivity_config = {
+    network = {
+      availability_zones = 2
+      vpc_cidr           = "100.64.0.0/21"
+      name               = "inspection"
+      private_netmask    = 24
+      public_netmask     = 0
+    }
+  }
+}
+```
+
+### Migration (Edge Case)
+
+Trusted layout with existing trusted attachments (requires manual association of new spokes to trusted route table):
+
+```hcl
+module "connectivity" {
+  source  = "appvia/connectivity/aws//modules/trusted"
+  version = "0.1.7"
+
+  name                       = "hub-tgw"
+  description                = "Transit gateway for all accounts in this region"
+  amazon_side_asn            = 64512
+  enable_dns_support         = true
+  enable_external_principals = true
+  tags                       = { Environment = "prod" }
+
+  connectivity_config = {
+    trusted_attachments = {
+      "ci-monitoring" = "tgw-attach-xxxxxxxx"
     }
   }
 }
@@ -57,55 +168,41 @@ Currently the module supports the following layouts:
 
 The inspection layout is intended to be used in collaboration with an [Inspection VPC](https://d1.awsstatic.com/architecture-diagrams/ArchitectureDiagrams/inspection-deployment-models-with-AWS-network-firewall-ra.pdf), filtering all traffic between the spokes, and depending if enabled, all traffic outbound to the internet or inbound via an ingress VPC.
 
-```hcl
-module "connectivity" {
-  source  = "appvia/connectivity/aws//modules/inspection"
-  version = "0.1.7""
+The module provisions the inspection VPC network and routing; it does **not** deploy the inspection firewall. Firewall configuration is handled by [terraform-aws-firewall](https://github.com/appvia/terraform-aws-firewall).
 
-  # insert variables here
-  connectivity_config = {
-    # The transit gateway attachment (naturally a chicken and egg problem here, so the attachment is optional)
-    attachment_id            = module.firewall.attachment_id
-    # OR you can provision the vpc for the inspection vpc module to consume
-    network = {
-      availability_zones     = 2
-      vpc_cidr               = "100.64.0.0/23"
-      name                   = "inspection"
-      private_subnet_netmask = 24
-      public_subnet_netmask  = 24
-    }
-  }
-}
-```
-
-Note we do not deploy the inspection firewall via this repository; purely the networking, layout, routing required to make it happen. This is intentional as we view the firewall configuration is likely to fall under a different teams remit. This can be configured using the [terraform-aws-firewall](https://github.com/appvia/terraform-aws-firewall).
-
-By adding the optional of egress, another VPC can be provisioned containing outbound nat gateways to route traffic to the internet.
+Inspection layout example with optional egress:
 
 ```hcl
 module "connectivity" {
   source  = "appvia/connectivity/aws//modules/inspection"
-  version = "0.0.2"
+  version = "0.1.7"
+
+  name                       = "hub-tgw"
+  description                = "Transit gateway for all accounts in this region"
+  amazon_side_asn            = 64512
+  enable_dns_support         = true
+  enable_external_principals = true
+  tags                       = var.tags
 
   services = {
     egress = {
       network = {
         availability_zones = 2
-        ipam_pool_id       = module.ipam_pool.id
         name               = "egress"
-        vpc_netmask        = 24
+        vpc_cidr           = "10.20.0.0/21"
+        private_netmask    = 24
+        public_netmask     = 24
       }
     }
   }
 
-  # insert variables here
   connectivity_config = {
     network = {
       availability_zones = 2
       vpc_cidr           = "100.64.0.0/21"
       name               = "inspection"
-      private_netmask    = 24
-      public_netmask     = 24
+      private_netmask     = 24
+      public_netmask      = 0
     }
   }
 }
@@ -146,25 +243,26 @@ Notes:
   <img src="https://github.com/appvia/terraform-aws-connectivity/blob/main/docs/egress-vpc.png?raw=true" alt="Egress VPC">
 </p>
 
-By adding a `var.connectivity_config.egress` object, the module will provision the necessary resources to route traffic to the internet via a shared egress VPC. Routing within the choose network layout (inspection, or trusted) is automatically provisioned accordingly.
+By adding a `services.egress` object, the module provisions the necessary resources to route traffic to the internet via a shared egress VPC. Routing within the chosen layout (inspection or trusted) is provisioned automatically.
 
 ```hcl
 module "connectivity" {
-  source  = "appvia/connectivity/aws//modules/<LAYOUT>"
-  version = "0.0.2"
+  source  = "appvia/connectivity/aws//modules/inspection"
+  version = "0.1.7"
+
+  # ... name, description, amazon_side_asn, tags, connectivity_config ...
 
   services = {
     egress = {
       network = {
         availability_zones = 2
-        ipam_pool_id       = var.ipam_pool_id
         name               = "egress"
+        vpc_cidr           = "10.20.0.0/21"
         private_netmask    = 28
-        vpc_netmask        = 24
+        public_netmask     = 28
       }
     }
   }
-  ...
 }
 ```
 
@@ -175,22 +273,23 @@ module "connectivity" {
   <img src="https://github.com/appvia/terraform-aws-connectivity/blob/main/docs/ingress-vpc.png?raw=true" alt="Ingress VPC">
 </p>
 
-By adding a `var.connectivity_config.ingress` object, the module will provision the necessary resources to route traffic from the internet to the tenant VPCs. Routing within the choose network layout (inspection, or trusted) is automatically provisioned accordingly. Note, this module does not provisioned the load balancers and or WAF devices depicted in the diagram; purely the VPC and connectivity.
+By adding a `services.ingress` object, the module provisions the necessary resources to route traffic from the internet to the tenant VPCs. Routing within the chosen layout (inspection or trusted) is provisioned automatically. Note: this module does not provision load balancers or WAF devices; purely the VPC and connectivity.
 
 ```hcl
 module "connectivity" {
-  source  = "appvia/connectivity/aws"
-  version = "0.0.2"
+  source  = "appvia/connectivity/aws//modules/inspection"
+  version = "0.1.7"
+
+  # ... name, description, amazon_side_asn, tags, connectivity_config ...
 
   services = {
     ingress = {
       network = {
         availability_zones = 2
-        ipam_pool_id       = var.ipam_pool_id
         name               = "ingress"
+        vpc_cidr           = "10.20.8.0/21"
         private_netmask    = 24
         public_netmask     = 22
-        vpc_netmask        = 21
       }
     }
   }
@@ -199,62 +298,53 @@ module "connectivity" {
 
 ### Private Endpoints
 
-Ensuring all traffic is private and does not traverse the internet is a common requirement. By adding the `var.connectivity_config.endpoints` object, the module will provision the necessary resources to route traffic to the internet via a shared endpoints VPC. Routing within the choose network layout (inspection, or trusted) is automatically provisioned accordingly.
+Ensuring all traffic is private and does not traverse the internet is a common requirement. By adding a `services.endpoints` object, the module provisions the necessary resources for a shared endpoints VPC with private endpoints. Routing within the chosen layout (inspection or trusted) is provisioned automatically.
 
-Take a look at the [endpoints module](https://github.com/appvia/terraform-aws-private-endpoints) to see how it works, and the prerequisites required on the consumer side i.e associating the resolvers rule sets with the spoke vpc.
+See the [terraform-aws-private-endpoints](https://github.com/appvia/terraform-aws-private-endpoints) module for details and consumer-side prerequisites (e.g., associating resolver rule sets with spoke VPCs).
 
 ```hcl
 module "connectivity" {
-  source  = "appvia/connectivity/aws"
-  version = "0.0.2"
+  source  = "appvia/connectivity/aws//modules/inspection"
+  version = "0.1.7"
+
+  # ... name, description, amazon_side_asn, tags, connectivity_config ...
 
   services = {
     endpoints = {
-      # A collection of private endpoints to provision
       services = {
-        ec2 = {
-          service = "ec2"
-        },
-        ec2messages = {
-          service = "ec2messages"
-        },
-        ssm = {
-          service = "ssm"
-        },
-        ssmmessages = {
-          service = "ssmmessages"
-        },
-        logs = {
-          service = "logs"
-        },
-        kms = {
-          service = "kms"
-        },
-        secretsmanager = {
-          service = "secretsmanager"
-        },
-        s3 = {
-          service = "s3"
-        },
+        ec2           = { service = "ec2" }
+        ec2messages   = { service = "ec2messages" }
+        ssm           = { service = "ssm" }
+        ssmmessages   = { service = "ssmmessages" }
+        logs          = { service = "logs" }
+        kms           = { service = "kms" }
+        secretsmanager = { service = "secretsmanager" }
+        s3            = { service = "s3" }
       }
-      # Configuration for sharing the resolver rule sets with the spoke vpcs
       sharing = {
-        ram_principals = var.ram_principals
+        principals = ["arn:aws:organizations::123456789012:ou/ou-xxxx"]
       }
-      # Configuration for the endpoints vpc
       network = {
         availability_zones = 2
-        ipam_pool_id       = var.ipam_pool_id
         name               = "endpoints"
+        vpc_cidr           = "10.20.16.0/21"
         private_netmask    = 24
-        public_netmask     = 22
-        vpc_netmask        = 21
       }
     }
-
   }
 }
 ```
+
+### Central DNS
+
+By adding a `services.dns` object, the module provisions a central DNS VPC with Route 53 Resolver and domain rules for private hosted zones and split-horizon DNS. See the [terraform-aws-dns](https://github.com/appvia/terraform-aws-dns) module for details.
+
+## Known Limitations
+
+- **Transit Gateway limits**: AWS enforces limits on Transit Gateways, route tables, attachments, and routes per region. Plan CIDR allocation and route table usage accordingly.
+- **Trusted layout**: Adding a new trusted attachment requires manual steps—new spokes are associated with the untrusted (workloads) table by default; you must manually move attachments to the trusted table and update `trusted_attachments`.
+- **Inspection layout**: The inspection VPC is always provisioned by this module; there is no option to bring an existing inspection attachment. The firewall itself is deployed separately via [terraform-aws-firewall](https://github.com/appvia/terraform-aws-firewall).
+- **Endpoints resolver rules**: Sharing resolver rules with spoke VPCs requires consumer-side configuration (associating rule sets). See [terraform-aws-private-endpoints](https://github.com/appvia/terraform-aws-private-endpoints) for details.
 
 ## IAM Roles (Cloud Access)
 
@@ -323,7 +413,7 @@ The `terraform-docs` utility is used to generate this README. Follow the below s
 
 1. Make changes to the `.terraform-docs.yml` file
 2. Fetch the `terraform-docs` binary (https://terraform-docs.io/user-guide/installation/)
-3. Run `terraform-docs markdown table --output-file ${PWD}/README.md --output-mode inject .`
+3. Run `make documentation` (or `terraform-docs .` for the root; module READMEs are generated per `modules/*`)
 
 <!-- BEGIN_TF_DOCS -->
 ## Providers
@@ -338,7 +428,3 @@ No inputs.
 
 No outputs.
 <!-- END_TF_DOCS -->
-
-```
-
-```
