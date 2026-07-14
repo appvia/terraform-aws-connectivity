@@ -14,19 +14,19 @@ permissions:
 
 jobs:
   examples:
-    uses: appvia/appvia-cicd-workflows/.github/workflows/terraform-module-validation.yml@201431e5550813748bf123734a627a747ac0db3e # main
+    uses: appvia/appvia-cicd-workflows/.github/workflows/terraform-module-validation.yml@6cccc47588f122c0abb76e46f8f636734607bc8b # main
     name: Module Examples
     with:
       working-directory: examples/inspection
 
   module-inspection:
-    uses: appvia/appvia-cicd-workflows/.github/workflows/terraform-module-validation.yml@201431e5550813748bf123734a627a747ac0db3e # main
+    uses: appvia/appvia-cicd-workflows/.github/workflows/terraform-module-validation.yml@6cccc47588f122c0abb76e46f8f636734607bc8b # main
     name: Inspection Connectivity
     with:
       working-directory: modules/inspection
 
   module-trusted:
-    uses: appvia/appvia-cicd-workflows/.github/workflows/terraform-module-validation.yml@201431e5550813748bf123734a627a747ac0db3e # main
+    uses: appvia/appvia-cicd-workflows/.github/workflows/terraform-module-validation.yml@6cccc47588f122c0abb76e46f8f636734607bc8b # main
     name: Trusted Connectivity
     with:
       working-directory: modules/trusted
