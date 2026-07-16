@@ -59,6 +59,11 @@ output "endpoints_vpc_id" {
   value       = local.enable_endpoints ? module.endpoints[0].vpc_id : null
 }
 
+output "endpoints_hosted_zone_arns" {
+  description = "The hosted zone arns of the endpoints VPC."
+  value       = local.enable_endpoints ? module.endpoints[0].hosted_zone_arns : null
+}
+
 output "endpoints_hosted_zone_ids" {
   description = "The hosted zone IDs of the endpoints."
   value       = local.enable_endpoints ? module.endpoints[0].hosted_zone : null
