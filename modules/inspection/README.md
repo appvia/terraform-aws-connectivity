@@ -32,6 +32,7 @@
 | <a name="output_egress_vpc_id_rt_attributes_by_type_by_az"></a> [egress\_vpc\_id\_rt\_attributes\_by\_type\_by\_az](#output\_egress\_vpc\_id\_rt\_attributes\_by\_type\_by\_az) | The route table attributes of the egress VPC. |
 | <a name="output_egress_vpc_private_subnet_attributes_by_az"></a> [egress\_vpc\_private\_subnet\_attributes\_by\_az](#output\_egress\_vpc\_private\_subnet\_attributes\_by\_az) | The attributes of the egress VPC. |
 | <a name="output_egress_vpc_public_subnet_attributes_by_az"></a> [egress\_vpc\_public\_subnet\_attributes\_by\_az](#output\_egress\_vpc\_public\_subnet\_attributes\_by\_az) | The attributes of the egress VPC. |
+| <a name="output_endpoints_hosted_zones"></a> [endpoints\_hosted\_zones](#output\_endpoints\_hosted\_zones) | The hosted zones of the endpoints VPC. |
 | <a name="output_endpoints_vpc_id"></a> [endpoints\_vpc\_id](#output\_endpoints\_vpc\_id) | The ID of the VPC that is used for endpoint traffic. |
 | <a name="output_endpoints_vpc_id_rt_attributes_by_type_by_az"></a> [endpoints\_vpc\_id\_rt\_attributes\_by\_type\_by\_az](#output\_endpoints\_vpc\_id\_rt\_attributes\_by\_type\_by\_az) | The route table attributes of the endpoints VPC. |
 | <a name="output_endpoints_vpc_private_subnet_attributes_by_az"></a> [endpoints\_vpc\_private\_subnet\_attributes\_by\_az](#output\_endpoints\_vpc\_private\_subnet\_attributes\_by\_az) | The attributes of the endpoints VPC. |
