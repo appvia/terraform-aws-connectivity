@@ -93,6 +93,11 @@ output "ingress_vpc_id_rt_attributes_by_type_by_az" {
   value       = local.enable_ingress ? module.ingress_vpc[0].rt_attributes_by_type_by_az : null
 }
 
+output "endpoints_hosted_zones" {
+  description = "The hosted zones of the endpoints VPC."
+  value       = local.enable_endpoints ? module.endpoints[0].hosted_zone_map : null
+}
+
 output "endpoints_vpc_id" {
   description = "The ID of the VPC that is used for endpoint traffic."
   value       = local.enable_endpoints ? module.endpoints[0].vpc_id : null
@@ -107,4 +112,3 @@ output "endpoints_vpc_id_rt_attributes_by_type_by_az" {
   description = "The route table attributes of the endpoints VPC."
   value       = local.enable_endpoints ? module.endpoints[0].rt_attributes_by_type_by_az : null
 }
-
