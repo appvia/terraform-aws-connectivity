@@ -46,5 +46,6 @@
 | <a name="output_region"></a> [region](#output\_region) | The AWS region in which the resources are created. |
 | <a name="output_return_route_table_id"></a> [return\_route\_table\_id](#output\_return\_route\_table\_id) | The ID for all return transit gateway route table |
 | <a name="output_segregated_route_table_id"></a> [segregated\_route\_table\_id](#output\_segregated\_route\_table\_id) | The ID for all segregated transit gateway route table |
+| <a name="output_shared_route_table_id"></a> [shared\_route\_table\_id](#output\_shared\_route\_table\_id) | The ID for the shared transit gateway route table |
 | <a name="output_transit_gateway_id"></a> [transit\_gateway\_id](#output\_transit\_gateway\_id) | The ID of the transit gateway. |
 <!-- END_TF_DOCS -->

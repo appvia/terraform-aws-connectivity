@@ -23,6 +23,11 @@ output "return_route_table_id" {
   value       = aws_ec2_transit_gateway_route_table.return.id
 }
 
+output "shared_route_table_id" {
+  description = "The ID for the shared transit gateway route table"
+  value       = aws_ec2_transit_gateway_route_table.shared.id
+}
+
 output "core_route_table_id" {
   description = "The ID for all core transit gateway route table"
   value       = aws_ec2_transit_gateway_route_table.core.id
