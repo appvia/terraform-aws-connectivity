@@ -95,17 +95,6 @@ variable "services" {
         # The netmask to use for the VPC. Defaults to null, required when using IPAM
       })
 
-      resolver_rules = optional(object({
-        # Defines the configuration for the sharing network via AWS RAM
-        principals = optional(list(string), [])
-        # The list of organizational units or accounts to share the endpoints resolvers rules with. Defaults to an empty list.
-      }), null)
-
-      resolver = optional(object({
-        enable = optional(bool, false)
-        # Whether to enable the resolver. Defaults to false.
-      }), null)
-
       services = optional(map(object({
         # Whether private DNS is enabled. Defaults to true.
         service_type = optional(string, "Interface")

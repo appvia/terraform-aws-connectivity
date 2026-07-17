@@ -108,9 +108,6 @@ module "connectivity" {
         vpc_cidr           = "10.20.16.0/21"
         private_netmask    = 24
       }
-      sharing = {
-        principals = ["arn:aws:organizations::123456789012:ou/ou-xxxx"]
-      }
       services = {
         ec2messages = { service = "ec2messages" }
         ssm         = { service = "ssm" }
@@ -298,9 +295,11 @@ module "connectivity" {
 
 ### Private Endpoints
 
-Ensuring all traffic is private and does not traverse the internet is a common requirement. By adding a `services.endpoints` object, the module provisions the necessary resources for a shared endpoints VPC with private endpoints. Routing within the chosen layout (inspection or trusted) is provisioned automatically.
+Ensuring all traffic is private and does not traverse the internet is a common requirement. By adding a `services.endpoints` object, the module provisions the endpoints VPC, interface VPC endpoints, and the transit gateway routing required to reach them from spoke VPCs. Routing within the chosen layout (inspection or trusted) is provisioned automatically.
 
-See the [terraform-aws-private-endpoints](https://github.com/appvia/terraform-aws-private-endpoints) module for details and consumer-side prerequisites (e.g., associating resolver rule sets with spoke VPCs).
+This module does **not** create Route 53 outbound resolvers or share resolver rules with spoke VPCs. With [Route 53 Profiles](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/profile-create.html), that approach is no longer required. Instead, create a Route 53 Profile in the connectivity account, associate the interface VPC endpoints with the profile, and [share the profile](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/sharing-profiles.html) with the required organizational units via AWS RAM. Spoke VPCs in consuming accounts then associate with the shared profile to resolve endpoint DNS names.
+
+See the [terraform-aws-private-endpoints](https://github.com/appvia/terraform-aws-private-endpoints) module for endpoint provisioning details.
 
 ```hcl
 module "connectivity" {
@@ -312,17 +311,14 @@ module "connectivity" {
   services = {
     endpoints = {
       services = {
-        ec2           = { service = "ec2" }
-        ec2messages   = { service = "ec2messages" }
-        ssm           = { service = "ssm" }
-        ssmmessages   = { service = "ssmmessages" }
-        logs          = { service = "logs" }
-        kms           = { service = "kms" }
+        ec2            = { service = "ec2" }
+        ec2messages    = { service = "ec2messages" }
+        ssm            = { service = "ssm" }
+        ssmmessages    = { service = "ssmmessages" }
+        logs           = { service = "logs" }
+        kms            = { service = "kms" }
         secretsmanager = { service = "secretsmanager" }
-        s3            = { service = "s3" }
-      }
-      sharing = {
-        principals = ["arn:aws:organizations::123456789012:ou/ou-xxxx"]
+        s3             = { service = "s3" }
       }
       network = {
         availability_zones = 2
@@ -344,7 +340,7 @@ By adding a `services.dns` object, the module provisions a central DNS VPC with 
 - **Transit Gateway limits**: AWS enforces limits on Transit Gateways, route tables, attachments, and routes per region. Plan CIDR allocation and route table usage accordingly.
 - **Trusted layout**: Adding a new trusted attachment requires manual steps—new spokes are associated with the untrusted (workloads) table by default; you must manually move attachments to the trusted table and update `trusted_attachments`.
 - **Inspection layout**: The inspection VPC is always provisioned by this module; there is no option to bring an existing inspection attachment. The firewall itself is deployed separately via [terraform-aws-firewall](https://github.com/appvia/terraform-aws-firewall).
-- **Endpoints resolver rules**: Sharing resolver rules with spoke VPCs requires consumer-side configuration (associating rule sets). See [terraform-aws-private-endpoints](https://github.com/appvia/terraform-aws-private-endpoints) for details.
+- **Endpoints DNS resolution**: This module does not create outbound resolvers or share resolver rules. Create a Route 53 Profile, associate the interface VPC endpoints with it, and share the profile with organizational units via AWS RAM. Spoke VPCs must associate with the shared profile. See [Route 53 Profiles](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/profile-create.html) for details.
 
 ## IAM Roles (Cloud Access)
 
@@ -374,29 +370,6 @@ module "network_transit_gateway_admin" {
     "arn:aws:iam::aws:policy/job-function/NetworkAdministrator",
     "arn:aws:iam::aws:policy/AmazonEC2FullAccess",
   ]
-
-  read_write_inline_policies = {
-    "endpoints" = jsonencode({
-      Version = "2012-10-17"
-      Statement = [
-        {
-          Action = [
-            "route53resolver:Associate*",
-            "route53resolver:Create*",
-            "route53resolver:Delete*",
-            "route53resolver:Disassociate*",
-            "route53resolver:Get*",
-            "route53resolver:List*",
-            "route53resolver:Tag*",
-            "route53resolver:Update*",
-            "Route53resolver:UnTag*"
-          ]
-          Effect   = "Allow"
-          Resource = "*"
-        }
-      ]
-    })
-  }
 
  # We can share our state with the firewall module
  shared_repositories = var.repositories.firewall != null ? [var.repositories.firewall.url] : []

@@ -91,11 +91,6 @@ variable "services" {
         vpc_netmask = optional(string, null)
         # The netmask to use for the VPC. Defaults to null, required when using IPAM
       })
-      sharing = optional(object({
-        # Defines the configuration for the sharing network via AWS RAM
-        principals = optional(list(string), [])
-        # The list of organizational units or accounts to share the endpoints resolvers rules with. Defaults to an empty list.
-      }), null)
       services = optional(map(object({
         # Defines the configuration for the private endpoints in the shared network.
         private_dns_enabled = optional(bool, true)

@@ -36,17 +36,6 @@ module "endpoints" {
     vpc_id                    = module.endpoints_vpc[0].vpc_id
   }
 
-  resolvers = {
-    outbound = {
-      create            = true
-      ip_address_offset = 10
-    }
-  }
-
-  resolver_rules = {
-    principals = var.services.endpoints.sharing.principals
-  }
-
   depends_on = [module.endpoints_vpc]
 }
 
